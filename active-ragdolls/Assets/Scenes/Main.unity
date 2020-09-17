@@ -610,6 +610,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1006582937 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8624825901002343850, guid: b21f208237dfa604184a809772254745,
+    type: 3}
+  m_PrefabInstance: {fileID: 8894856260873522807}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1006582939
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1006582937}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 0e9a428405a52cf43b95ab206dd3babd, type: 3}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &1014210308 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8894856259471134342, guid: b21f208237dfa604184a809772254745,
+    type: 3}
+  m_PrefabInstance: {fileID: 8894856260873522807}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1014210311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1014210308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e94b75fab5443e04995bf072a54a9aec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _balanceMode: 0
 --- !u!1 &1226405730 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1176731534367789175, guid: b21f208237dfa604184a809772254745,
@@ -1925,7 +1969,7 @@ PrefabInstance:
     - target: {fileID: 8894856261057628785, guid: b21f208237dfa604184a809772254745,
         type: 3}
       propertyPath: m_Constraints
-      value: 80
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8894856261057628785, guid: b21f208237dfa604184a809772254745,
         type: 3}

@@ -2,6 +2,8 @@
 
 namespace ActiveRagdoll {
 	public static class ConfigurableJointExtensions {
+		// Original author: Michael Stevenson | https://www.mstevenson.net/
+
 		/// <summary>
 		/// Sets a joint's targetRotation to match a given local rotation.
 		/// The joint transform's local rotation must be cached on Start and passed into this method.
