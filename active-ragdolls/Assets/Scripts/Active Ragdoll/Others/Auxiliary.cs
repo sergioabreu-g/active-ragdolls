@@ -6,7 +6,7 @@ using UnityEngine;
 namespace ActiveRagdoll {
     // Original author: Sergio Abreu García | https://sergioabreu.me
 
-    [Serializable] public struct StabilizerJointConfig {
+    [Serializable] public struct JointDriveConfig {
         public float positionSpring, positionDamper, maximumForce;
     }
 }

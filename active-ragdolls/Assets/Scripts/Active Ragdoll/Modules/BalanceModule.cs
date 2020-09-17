@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,20 +8,29 @@ namespace ActiveRagdoll {
 
     public class BalanceModule : Module {
 
-        private enum BALANCE_MODE {
+        public enum BALANCE_MODE {
             FREEZE_ROTATIONS, // Freezes all but the Y axis rotations of the torso
             STABILIZER_JOINT, // Creates a stabilization rigidbody that pulls the torso towards
                               // a vertical position through a joint
         }
+        
+        [Serializable] public struct Config {
+            public BALANCE_MODE balanceMode;
+            public JointDriveConfig stabilizerJointConfig;
+        }
+        private Config _config;
 
-        [SerializeField] private BALANCE_MODE _balanceMode;
-
-        [SerializeField] private StabilizerJointConfig _stabilizerJointConfig;
         private GameObject _stabilizerGameobject;
 
         void Start() {
-            // Initialize the balancer depending on the selected mode
-            switch (_balanceMode) {
+
+        }
+
+        /// <summary>
+        /// Initilizes whatever is necessary depending on the balance mode selected
+        /// </summary>
+        private void InitBalance() {
+            switch (_config.balanceMode) {
                 case BALANCE_MODE.FREEZE_ROTATIONS:
                     _activeRagdoll.GetPhysicalTorso().constraints =
                     RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -28,6 +38,23 @@ namespace ActiveRagdoll {
 
                 case BALANCE_MODE.STABILIZER_JOINT:
                     InitializeStabilizerJoint();
+                    break;
+
+                default: break;
+            }
+        }
+
+        /// <summary>
+        /// Removes and sets back to default everything that was being used for balance.
+        /// </summary>
+        private void StopBalance() {
+            switch (_config.balanceMode) {
+                case BALANCE_MODE.FREEZE_ROTATIONS:
+                    _activeRagdoll.GetPhysicalTorso().constraints = 0;
+                    break;
+
+                case BALANCE_MODE.STABILIZER_JOINT:
+                    Destroy(_stabilizerGameobject);
                     break;
 
                 default: break;
@@ -52,13 +79,19 @@ namespace ActiveRagdoll {
             joint.connectedBody = _activeRagdoll.GetPhysicalTorso();
 
             // Sets the ConfigurableJoint angular drives defined by the user
-            var jointDrive = new JointDrive();
-            jointDrive.positionSpring = _stabilizerJointConfig.positionSpring;
-            jointDrive.positionDamper = _stabilizerJointConfig.positionDamper;
-            jointDrive.maximumForce = _stabilizerJointConfig.maximumForce;
+            var jointDrive = new UnityEngine.JointDrive();
+            jointDrive.positionSpring = _config.stabilizerJointConfig.positionSpring;
+            jointDrive.positionDamper = _config.stabilizerJointConfig.positionDamper;
+            jointDrive.maximumForce = _config.stabilizerJointConfig.maximumForce;
 
             joint.angularXDrive = jointDrive;
             joint.angularYZDrive = jointDrive;
+        }
+
+        override public void StateChanged(in ActiveRagdollState state) {
+            StopBalance();
+            _config = state.balanceModuleConfig;
+            InitBalance();
         }
     }
 }

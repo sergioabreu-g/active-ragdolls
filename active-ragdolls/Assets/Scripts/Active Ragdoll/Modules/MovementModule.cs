@@ -1,9 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActiveRagdoll {
+    // Original author: Sergio Abreu García | https://sergioabreu.me
+
     public class MovementModule : Module {
+        [Serializable] public struct Config {
+
+        }
+        private Config _config;
+
         // Body info storage
         private Quaternion[] _initialJointsRotation;
         private ConfigurableJoint[] _joints;
@@ -27,6 +35,10 @@ namespace ActiveRagdoll {
             for (int i = 0; i < _joints.Length; i++) {
                 ConfigurableJointExtensions.SetTargetRotationLocal(_joints[i], _animatedBones[i + 1].localRotation, _initialJointsRotation[i]);
             }
+        }
+
+        override public void StateChanged(in ActiveRagdollState state) {
+            _config = state.movementModuleConfig;
         }
     }
 }
