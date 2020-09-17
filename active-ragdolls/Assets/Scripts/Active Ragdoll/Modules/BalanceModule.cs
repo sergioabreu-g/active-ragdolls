@@ -12,6 +12,8 @@ namespace ActiveRagdoll {
             FREEZE_ROTATIONS, // Freezes all but the Y axis rotations of the torso
             STABILIZER_JOINT, // Creates a stabilization rigidbody that pulls the torso towards
                               // a vertical position through a joint
+            MANUAL_STABILIZATION, // It also uses a stabilization rigidbody, but it allows the user
+                                  // to control its rotation, instead of freezing it into a vertical position
         }
         
         [Serializable] public struct Config {
@@ -21,9 +23,24 @@ namespace ActiveRagdoll {
         private Config _config;
 
         private GameObject _stabilizerGameobject;
+        private Rigidbody _stabilizerRigidbody;
 
-        void Start() {
+        void FixedUpdate() {
+            // Move the balancer to the players position (useless, just for debugging clarity)
+            switch (_config.balanceMode) {
+                case BALANCE_MODE.FREEZE_ROTATIONS:
+                    _stabilizerRigidbody.MovePosition(_activeRagdoll.GetPhysicalTorso().position);
+                    break;
 
+                case BALANCE_MODE.STABILIZER_JOINT:
+                    InitializeStabilizerJoint();
+                    break;
+
+                case BALANCE_MODE.MANUAL_STABILIZATION:
+                    break;
+
+                default: break;
+            }
         }
 
         /// <summary>
@@ -38,6 +55,9 @@ namespace ActiveRagdoll {
 
                 case BALANCE_MODE.STABILIZER_JOINT:
                     InitializeStabilizerJoint();
+                    break;
+
+                case BALANCE_MODE.MANUAL_STABILIZATION:
                     break;
 
                 default: break;
@@ -57,6 +77,9 @@ namespace ActiveRagdoll {
                     Destroy(_stabilizerGameobject);
                     break;
 
+                case BALANCE_MODE.MANUAL_STABILIZATION:
+                    break;
+
                 default: break;
             }
         }
@@ -72,8 +95,8 @@ namespace ActiveRagdoll {
             _stabilizerGameobject.transform.eulerAngles =
                 new Vector3(0, _activeRagdoll.GetPhysicalTorso().transform.eulerAngles.y, 0);
 
-            var rigidbody = _stabilizerGameobject.GetComponent<Rigidbody>();
-            rigidbody.isKinematic = true;
+            _stabilizerRigidbody = _stabilizerGameobject.GetComponent<Rigidbody>();
+            _stabilizerRigidbody.isKinematic = true;
 
             var joint = _stabilizerGameobject.GetComponent<ConfigurableJoint>();
             joint.connectedBody = _activeRagdoll.GetPhysicalTorso();
@@ -94,4 +117,4 @@ namespace ActiveRagdoll {
             InitBalance();
         }
     }
-}
+} // namespace ActiveRagdoll

@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace ActiveRagdoll {
     // Original author: Sergio Abreu García | https://sergioabreu.me
 
     public class MovementModule : Module {
         [Serializable] public struct Config {
-
+            public Transform lookDirector;
         }
         private Config _config;
 
@@ -31,14 +32,26 @@ namespace ActiveRagdoll {
         }
 
         void FixedUpdate() {
-            // Make the physical body match the animated one
-            for (int i = 0; i < _joints.Length; i++) {
-                ConfigurableJointExtensions.SetTargetRotationLocal(_joints[i], _animatedBones[i + 1].localRotation, _initialJointsRotation[i]);
-            }
+            UpdateJointTargets();
+            UpdateLookDirection();
         }
 
         override public void StateChanged(in ActiveRagdollState state) {
             _config = state.movementModuleConfig;
         }
+
+        /// <summary>
+        /// Makes the physical bones match the rotation of the animated ones
+        /// </summary>
+        private void UpdateJointTargets() {
+            for (int i = 0; i < _joints.Length; i++) {
+                ConfigurableJointExtensions.SetTargetRotationLocal(_joints[i], _animatedBones[i + 1].localRotation, _initialJointsRotation[i]);
+            }
+        }
+
+        private void UpdateLookDirection() {
+            // TEMPORAL
+            _activeRagdoll.GetAnimatorHelper().LookAtPoint(_activeRagdoll.GetPhysicalTorso().transform.position + _activeRagdoll.GetPhysicalTorso().transform.forward + Vector3.up/2);
+        }
     }
-}
+} // namespace ActiveRagdoll

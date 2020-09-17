@@ -39,4 +39,4 @@ namespace ActiveRagdoll {
             PlayAnimation("Walking", movement.y);
         }
     }
-}
+} // namespace ActiveRagdoll

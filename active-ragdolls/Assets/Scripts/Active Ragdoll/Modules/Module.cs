@@ -39,4 +39,4 @@ namespace ActiveRagdoll {
         /// <param name="state">The new active state of the Active Ragdoll</param>
         virtual public void StateChanged(in ActiveRagdollState state) { }
     }
-}
+} // namespace ActiveRagdoll

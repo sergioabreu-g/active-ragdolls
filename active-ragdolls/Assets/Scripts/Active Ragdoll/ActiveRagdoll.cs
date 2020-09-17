@@ -33,6 +33,7 @@ namespace ActiveRagdoll {
 
         // Animators of both bodies
         private Animator _animatedAnimator, _physicalAnimator;
+        private AnimatorHelper _animatorHelper;
 
         [Header("Advanced")]
         // To avoid overloading the physics engine, solver iterations are set higher only
@@ -56,6 +57,8 @@ namespace ActiveRagdoll {
             _animatedAnimator = tempAnimators[0];
             _physicalAnimator = tempAnimators[1];
 
+            _animatorHelper = _animatedAnimator.gameObject.AddComponent<AnimatorHelper>();
+
             // Get & Init all the Modules
             _modules = new List<Module>();
             GetComponents<Module>(_modules);
@@ -68,8 +71,26 @@ namespace ActiveRagdoll {
             SetState(_states[0].name);
 
 #if DEBUG_MODE
-            Debug.Log(_modules.Count + " Modules Initialized.");
+            Debug.Log("Active Ragdoll: " + _modules.Count + " Modules Initialized.");
 #endif
+        }
+
+        void FixedUpdate() {
+            SyncAnimatedBody();
+        }
+
+        /// <summary>
+        /// Updates the rotation and position of the animated body
+        /// to match the ones of the physical, so the IK movements
+        /// are in calculated in synchrony. e.g. when looking at something,
+        /// if the animated and physical bodies are not in the same spot and
+        /// with the same orientation, the head movement calculated by the IK
+        /// for the animated body won't match the movement the physical body
+        /// needs to look at the same thing.
+        /// </summary>
+        private void SyncAnimatedBody() {
+            _animatedAnimator.transform.rotation = _physicalTorso.rotation;
+            _animatedAnimator.transform.position = _physicalTorso.position + (_animatedAnimator.transform.position - _animatedTorso.position);
         }
 
 
@@ -144,6 +165,14 @@ namespace ActiveRagdoll {
         }
 
         /// <summary>
+        /// Gets the Animator Helper
+        /// </summary>
+        /// <returns>The Animator Helper</returns>
+        public AnimatorHelper GetAnimatorHelper() {
+            return _animatorHelper;
+        }
+
+        /// <summary>
         /// Gets all the states assigned to this Active Ragdoll
         /// </summary>
         /// <returns>All the states assigned to this Active Ragdoll</returns>
@@ -198,4 +227,4 @@ namespace ActiveRagdoll {
                 mod.StateChanged(_currentState);
         }
     }
-}
+} // namespace ActiveRagdoll
