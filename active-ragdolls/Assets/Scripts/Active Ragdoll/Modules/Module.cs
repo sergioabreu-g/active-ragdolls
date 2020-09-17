@@ -10,21 +10,26 @@ namespace ActiveRagdoll {
     /// everything is easier to manage and can be easily debugged and
     /// mantained. This is the class every Module must inherit from.
     /// </summary>
+    [RequireComponent(typeof(ActiveRagdoll))]
     public class Module : MonoBehaviour {
         // The Active Ragdoll this module instace is attached to
         protected ActiveRagdoll _activeRagdoll;
 
-        protected virtual void Start() {
-            if (_activeRagdoll == null)
-                Debug.LogError("No Active Ragdoll script could be found in this GameObject. Modules can only be attached to GameObjects with an ActiveRagdoll script.");
-        }
-
         /// <summary>
-        /// Initializes this module, linking it to the given Active Ragdoll
+        /// Initializes this module, linking it to the given Active Ragdoll. This function
+        /// gets called from the ActiveRagdoll 'Awake()' method, so it can be used as an awake
+        /// to ensure
         /// </summary>
         /// <param name="activeRagdoll">Active Ragdoll to link this module to</param>
         public void Initialize(ActiveRagdoll activeRagdoll) {
             _activeRagdoll = activeRagdoll;
+            LateAwake();
         }
+
+        /// <summary>
+        /// This method gets called right after the initialization of the module, which is
+        /// done at the end of the ActiveRagdoll's 'Awake' function.
+        /// </summary>
+        virtual protected void LateAwake() { }
     }
 }

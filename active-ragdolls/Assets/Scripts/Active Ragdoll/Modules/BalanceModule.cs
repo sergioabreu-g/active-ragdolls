@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ActiveRagdoll {
     // Original author: Sergio Abreu García | https://sergioabreu.me
 
-    public class BalancerModule : Module {
+    public class BalanceModule : Module {
 
         private enum BALANCE_MODE {
             FREEZE_ROTATIONS, // Freezes all but the Y axis rotations of the torso
@@ -16,13 +16,9 @@ namespace ActiveRagdoll {
         [SerializeField] private BALANCE_MODE _balanceMode;
 
         [SerializeField] private StabilizerJointConfig _stabilizerJointConfig;
-
         private GameObject _stabilizerGameobject;
-        private ConfigurableJoint _stabilizerjoint;
 
-        override protected void Start() {
-            base.Start();
-
+        void Start() {
             // Initialize the balancer depending on the selected mode
             switch (_balanceMode) {
                 case BALANCE_MODE.FREEZE_ROTATIONS:

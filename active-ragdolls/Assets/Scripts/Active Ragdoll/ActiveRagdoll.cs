@@ -9,7 +9,8 @@ using UnityEngine;
 namespace ActiveRagdoll {
     // Original author: Sergio Abreu García | https://sergioabreu.me
 
-    [RequireComponent(typeof(BalancerModule))]
+    [RequireComponent(typeof(BalanceModule))]
+    [RequireComponent(typeof(MovementModule))]
     public class ActiveRagdoll : MonoBehaviour {
         // MODULES
         private List<Module> _modules;
@@ -21,10 +22,9 @@ namespace ActiveRagdoll {
         [SerializeField] private Transform _animatedTorso;
         [SerializeField] private Rigidbody _physicalTorso;
 
-        // Storage for all the bodies information
-        private Transform[] _animatedBody;
+        // Body info storage
+        private Transform[] _animatedBones;
         private ConfigurableJoint[] _joints;
-        private Quaternion[] _initialJointsRotation;
 
         // Animators of both bodies
         private Animator _animatedAnimator, _physicalAnimator;
@@ -36,6 +36,13 @@ namespace ActiveRagdoll {
         [SerializeField] private int _velSolverIterations = 11;
 
         void Awake() {
+            _animatedBones = _animatedTorso.GetComponentsInChildren<Transform>();
+            _joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
+
+            var tempAnimators = GetComponentsInChildren<Animator>();
+            _animatedAnimator = tempAnimators[0];
+            _physicalAnimator = tempAnimators[1];
+
             // Get & Init all the Modules
             _modules = new List<Module>();
             GetComponents<Module>(_modules);
@@ -48,28 +55,6 @@ namespace ActiveRagdoll {
 #endif
         }
 
-        void Start() {
-            _animatedBody = _animatedTorso.GetComponentsInChildren<Transform>();
-            _joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
-            _initialJointsRotation = new Quaternion[_joints.Length];
-
-            var tempAnimators = GetComponentsInChildren<Animator>();
-            _animatedAnimator = tempAnimators[0];
-            _physicalAnimator = tempAnimators[1];
-
-            // Save the initial rotation of the joints, necessary for later matching
-            // the animated body
-            for (int i = 0; i < _joints.Length; i++) {
-                _initialJointsRotation[i] = _joints[i].transform.localRotation;
-            }
-        }
-        
-        void FixedUpdate() {
-            // Make the physical body match the animated one
-            for (int i = 0; i < _joints.Length; i++) {
-                ConfigurableJointExtensions.SetTargetRotationLocal(_joints[i], _animatedBody[i + 1].localRotation, _initialJointsRotation[i]);
-            }
-        }
 
 
 
@@ -99,6 +84,30 @@ namespace ActiveRagdoll {
         /// <returns>The Rigidboy of the physical body's torso</returns>
         public Rigidbody GetPhysicalTorso() {
             return _physicalTorso;
+        }
+
+        /// <summary>
+        /// Gets the Transform of the animated body's torso
+        /// </summary>
+        /// <returns>The Transform of the animated body's torso</returns>
+        public Transform GetAnimatedTorso() {
+            return _animatedTorso;
+        }
+
+        /// <summary>
+        /// Gets all the physical body's joints
+        /// </summary>
+        /// <returns>All the physical body's joints</returns>
+        public ConfigurableJoint[] GetJoints() {
+            return _joints;
+        }
+
+        /// <summary>
+        /// Gets all the animated body's bones
+        /// </summary>
+        /// <returns>All the animated body's bones</returns>
+        public Transform[] GetAnimatedBones() {
+            return _animatedBones;
         }
     }
 }
