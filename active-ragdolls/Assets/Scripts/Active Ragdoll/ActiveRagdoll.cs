@@ -1,10 +1,15 @@
-﻿using System.Collections;
+﻿#if UNITY_EDITOR
+#define DEBUG_MODE
+#endif
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActiveRagdoll {
     // Original author: Sergio Abreu García | https://sergioabreu.me
 
+    [RequireComponent(typeof(BalancerModule))]
     public class ActiveRagdoll : MonoBehaviour {
         // MODULES
         private List<Module> _modules;
@@ -30,13 +35,7 @@ namespace ActiveRagdoll {
         [SerializeField] private int _solverIterations = 11;
         [SerializeField] private int _velSolverIterations = 11;
 
-
-
         void Awake() {
-#if !UNITY_EDITOR
-            _debugMode = false;
-#endif
-
             // Get & Init all the Modules
             _modules = new List<Module>();
             GetComponents<Module>(_modules);
@@ -44,8 +43,9 @@ namespace ActiveRagdoll {
             foreach (Module module in _modules)
                 module.Initialize(this);
 
-            if (_debugMode)
-                Debug.Log(_modules.Count + " Modules Initialized.");
+#if DEBUG_MODE
+            Debug.Log(_modules.Count + " Modules Initialized.");
+#endif
         }
 
         void Start() {

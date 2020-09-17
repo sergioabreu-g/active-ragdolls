@@ -653,7 +653,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e94b75fab5443e04995bf072a54a9aec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _balanceMode: 0
+  _balanceMode: 1
+  _stabilizerJointConfig:
+    positionSpring: 2000
+    positionDamper: 5
+    maximumForce: Infinity
 --- !u!1 &1226405730 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1176731534367789175, guid: b21f208237dfa604184a809772254745,
