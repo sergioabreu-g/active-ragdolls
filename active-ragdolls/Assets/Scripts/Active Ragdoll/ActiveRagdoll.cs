@@ -11,13 +11,16 @@ namespace ActiveRagdoll {
 
     [RequireComponent(typeof(BalanceModule))]
     [RequireComponent(typeof(MovementModule))]
-    [RequireComponent(typeof(ControlModule))]
+    [RequireComponent(typeof(InputModule))]
     public class ActiveRagdoll : MonoBehaviour {
         // MODULES
         private List<Module> _modules;
 
         [Header("General")]
         [SerializeField] private ActiveRagdollState[] _states;
+        [Tooltip("Its forward vector defines the direction of the movement and look of the Active Ragdoll." +
+         "It's usually his camera, but it can be set to any transform.")]
+        [SerializeField] private Transform _director;
         private ActiveRagdollState _currentState;
 
         // For faster getting & setting methods for the states
@@ -89,7 +92,6 @@ namespace ActiveRagdoll {
         /// needs to look at the same thing.
         /// </summary>
         private void SyncAnimatedBody() {
-            _animatedAnimator.transform.rotation = _physicalTorso.rotation;
             _animatedAnimator.transform.position = _physicalTorso.position + (_animatedAnimator.transform.position - _animatedTorso.position);
         }
 
@@ -103,7 +105,7 @@ namespace ActiveRagdoll {
         /// </summary>
         /// <param name="bone">Bone you want the transform of</param>
         /// <returns>The transform of the given ANIMATED bone</returns>
-        public Transform GetAnimatedBoneTransform(HumanBodyBones bone) {
+        public Transform GetAnimatedBone(HumanBodyBones bone) {
             return _animatedAnimator.GetBoneTransform(bone);
         }
 
@@ -112,7 +114,7 @@ namespace ActiveRagdoll {
         /// </summary>
         /// <param name="bone">Bone you want the transform of</param>
         /// <returns>The transform of the given PHYSICAL bone</returns>
-        public Transform GetPhysicalBoneTransform(HumanBodyBones bone) {
+        public Transform GetPhysicalBone(HumanBodyBones bone) {
             return _physicalAnimator.GetBoneTransform(bone);
         }
 
@@ -225,6 +227,15 @@ namespace ActiveRagdoll {
 
             foreach (Module mod in _modules)
                 mod.StateChanged(_currentState);
+        }
+
+        /// <summary>
+        /// Gets the director transform, whose forward vector is used to define the
+        /// movement and look direction.
+        /// </summary>
+        /// <returns>The director transform</returns>
+        public Transform GetDirector() {
+            return _director;
         }
     }
 } // namespace ActiveRagdoll

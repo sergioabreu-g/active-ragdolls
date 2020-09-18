@@ -102,11 +102,6 @@ namespace ActiveRagdoll {
             _currentDistance = Mathf.Clamp(_currentDistance + scrollValue.y / 1200 * -_scrollSensitivity,
                                    _minDistance, _maxDistance);
         }
-
-        /* REMOVE THIS
-        public float GetVerticalPercent() {
-            return 1 - Mathf.Clamp01((_mouse.y - _minVerticalAngle) / Mathf.Abs(_maxVerticalAngle - _minVerticalAngle));
-        }*/
     }
 } // namespace ARagdoll
                        

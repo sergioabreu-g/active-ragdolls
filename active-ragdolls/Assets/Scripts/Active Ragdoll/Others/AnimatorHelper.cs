@@ -12,11 +12,17 @@ namespace ActiveRagdoll {
     public class AnimatorHelper : MonoBehaviour {
         private Animator _animator;
 
-        // Targets for the IK
-        private Transform _targetsParent;
+        // Look variables
+        private enum LookMode {
+            TARGET,
+            POINT,
+        }
+        private LookMode _lookMode = LookMode.POINT;
         private Transform _lookTarget;
         private Vector3 _lookPoint = Vector3.zero;
-        private bool _lookingAtPoint = true; // It can be either looking at a target or at a point
+
+        // Targets for the IK
+        private Transform _targetsParent;
         private Transform _leftHandTarget, _rightHandTarget, _leftHandHint, _rightHandHint;
         private Transform _leftFootTarget, _rightFootTarget;
 
@@ -79,7 +85,12 @@ namespace ActiveRagdoll {
         private void OnAnimatorIK(int layerIndex) {
             // Look
             _animator.SetLookAtWeight(1, ((_leftArmIKWeight + _rightArmIKWeight) / 2) * _chestMaxLookWeight, 1, 1, 0);
-            _animator.SetLookAtPosition(_lookingAtPoint? _lookPoint : _lookTarget.position);
+
+            Vector3 lookPos = Vector3.zero;
+            if (_lookMode == LookMode.TARGET) lookPos = _lookTarget.position;
+            if (_lookMode == LookMode.POINT) lookPos = _lookPoint;
+
+            _animator.SetLookAtPosition(lookPos);
 
             // Left arm
             _animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, _currentLeftArmIKWeight);
@@ -114,7 +125,6 @@ namespace ActiveRagdoll {
             _animator.SetIKRotation(AvatarIKGoal.RightFoot, _rightFootTarget.rotation);
         }
 
-
         // ------------------- GETTERS & SETTERS -------------------
 
         public Transform GetLookTarget() {
@@ -127,12 +137,12 @@ namespace ActiveRagdoll {
 
         public void LookAtTarget(Transform target) {
             _lookTarget = target;
-            _lookingAtPoint = false;
+            _lookMode = LookMode.TARGET;
         }
 
         public void LookAtPoint(Vector3 point) {
             _lookPoint = point;
-            _lookingAtPoint = true;
+            _lookMode = LookMode.POINT;
         }
 
         public Transform GetLeftHandTarget() {

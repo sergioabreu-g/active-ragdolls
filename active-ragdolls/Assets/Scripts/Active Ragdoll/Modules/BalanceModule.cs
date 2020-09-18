@@ -29,11 +29,13 @@ namespace ActiveRagdoll {
             // Move the balancer to the players position (useless, just for debugging clarity)
             switch (_config.balanceMode) {
                 case BALANCE_MODE.FREEZE_ROTATIONS:
-                    _stabilizerRigidbody.MovePosition(_activeRagdoll.GetPhysicalTorso().position);
+                    _activeRagdoll.GetPhysicalTorso().MoveRotation(_activeRagdoll.GetAnimatedTorso().rotation);
+
                     break;
 
                 case BALANCE_MODE.STABILIZER_JOINT:
-                    InitializeStabilizerJoint();
+                    _stabilizerRigidbody.MovePosition(_activeRagdoll.GetPhysicalTorso().position);
+                    _stabilizerRigidbody.MoveRotation(_activeRagdoll.GetAnimatedTorso().rotation);
                     break;
 
                 case BALANCE_MODE.MANUAL_STABILIZATION:

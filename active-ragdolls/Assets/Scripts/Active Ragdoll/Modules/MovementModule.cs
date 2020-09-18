@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 namespace ActiveRagdoll {
     // Original author: Sergio Abreu García | https://sergioabreu.me
 
     public class MovementModule : Module {
         [Serializable] public struct Config {
-            public Transform lookDirector;
         }
         private Config _config;
 
@@ -17,6 +13,8 @@ namespace ActiveRagdoll {
         private Quaternion[] _initialJointsRotation;
         private ConfigurableJoint[] _joints;
         private Transform[] _animatedBones;
+
+        private Vector2 _movementInput;
 
         override protected void LateAwake() {
             _joints = _activeRagdoll.GetJoints();
@@ -33,7 +31,8 @@ namespace ActiveRagdoll {
 
         void FixedUpdate() {
             UpdateJointTargets();
-            UpdateLookDirection();
+            UpdateLookPoint();
+            UpdateMovement();
         }
 
         override public void StateChanged(in ActiveRagdollState state) {
@@ -49,9 +48,36 @@ namespace ActiveRagdoll {
             }
         }
 
-        private void UpdateLookDirection() {
+        private void UpdateLookPoint() {
             // TEMPORAL
-            _activeRagdoll.GetAnimatorHelper().LookAtPoint(_activeRagdoll.GetPhysicalTorso().transform.position + _activeRagdoll.GetPhysicalTorso().transform.forward + Vector3.up/2);
+            Vector3 lookPoint = _activeRagdoll.GetAnimatedBone(HumanBodyBones.Head).position;
+            lookPoint += _activeRagdoll.GetDirector().forward;
+
+            _activeRagdoll.GetAnimatorHelper().LookAtPoint(lookPoint);
+        }
+
+        private void UpdateMovement() {
+            if (_movementInput == Vector2.zero) {
+                PlayAnimation("Idle");
+                return;
+            }
+
+            float angleOffset = Vector2.SignedAngle(_movementInput, Vector2.up);
+            Vector3 targetForward = Quaternion.AngleAxis(angleOffset, Vector3.up) * Auxiliary.GetFloorProjection(_activeRagdoll.GetDirector().forward);
+            _activeRagdoll.GetAnimatedAnimator().transform.rotation = Quaternion.LookRotation(targetForward, Vector3.up);
+
+            PlayAnimation("Moving", _movementInput.magnitude);
+        }
+
+        public void PlayAnimation(string animation, float speed = 1) {
+            var animator = _activeRagdoll.GetAnimatedAnimator();
+
+            animator.Play(animation);
+            animator.SetFloat("speed", speed);
+        }
+
+        public void InputMove(Vector2 movement) {
+            _movementInput = movement;
         }
     }
 } // namespace ActiveRagdoll

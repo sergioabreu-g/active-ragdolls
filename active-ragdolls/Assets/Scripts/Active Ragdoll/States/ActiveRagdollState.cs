@@ -9,6 +9,6 @@ namespace ActiveRagdoll {
 
         public BalanceModule.Config balanceModuleConfig;
         public MovementModule.Config movementModuleConfig;
-        public ControlModule.Config controlModuleConfig;
+        public InputModule.Config inputModuleConfig;
     }
 }
