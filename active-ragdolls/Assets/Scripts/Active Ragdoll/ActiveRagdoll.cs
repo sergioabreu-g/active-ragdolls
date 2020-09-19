@@ -39,10 +39,9 @@ namespace ActiveRagdoll {
         private AnimatorHelper _animatorHelper;
 
         [Header("Advanced")]
-        // To avoid overloading the physics engine, solver iterations are set higher only
-        // for the active ragdoll rigidbodies, instead of modifying the general physics configuration.
-        [SerializeField] private int _solverIterations = 11;
-        [SerializeField] private int _velSolverIterations = 11;
+        [Tooltip("To avoid overloading the physics engine, solver iterations are set higher only" +
+                 "for the active ragdoll rigidbodies, instead of modifying the general physics configuration.")]
+        [SerializeField] private int _solverIterations = 11, _velSolverIterations = 11;
 
         void Awake() {
             if (_states.Length <= 0)

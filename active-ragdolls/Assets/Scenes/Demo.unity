@@ -641,7 +641,7 @@ MonoBehaviour:
   _inclinationAngle: 40
   _inclinationDistance: 0.8
   _minDistanceToLookedObject: 1.5
-  _minDistance: 1
+  _minDistance: 2
   _maxDistance: 5
   _defaultDistance: 2.5
   _minVerticalAngle: -60

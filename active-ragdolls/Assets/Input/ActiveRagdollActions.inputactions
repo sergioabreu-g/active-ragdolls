@@ -14,6 +14,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "ScrollWheel",
+                    "type": "PassThrough",
+                    "id": "4df4dcf9-2fda-4e1a-a779-ef46eec5603b",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Look",
                     "type": "Value",
                     "id": "237a217c-f735-4ba0-9321-bc03a7a1d643",
@@ -248,6 +256,17 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "53866052-caf2-4153-96f6-2c5fd8dd559d",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ScrollWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

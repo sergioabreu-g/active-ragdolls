@@ -14,6 +14,7 @@ namespace ActiveRagdoll {
         private ConfigurableJoint[] _joints;
         private Transform[] _animatedBones;
 
+        // Movement variables
         private Vector2 _movementInput;
 
         override protected void LateAwake() {
@@ -69,6 +70,13 @@ namespace ActiveRagdoll {
             PlayAnimation("Moving", _movementInput.magnitude);
         }
 
+        /// <summary>
+        /// Plays an animation using the animator. The speed doesn't change the actual speed of the animator,
+        /// but a parameter of the same name that is used to multiply the speed of certain animations. This
+        /// way only the speed of the desired animations is modified, not affecting the whole system.
+        /// </summary>
+        /// <param name="animation">The name of the animation state to be played</param>
+        /// <param name="speed">The speed to be set</param>
         public void PlayAnimation(string animation, float speed = 1) {
             var animator = _activeRagdoll.GetAnimatedAnimator();
 
@@ -76,6 +84,10 @@ namespace ActiveRagdoll {
             animator.SetFloat("speed", speed);
         }
 
+        /// <summary>
+        /// Invoked by a message when the Input receives a movement order
+        /// </summary>
+        /// <param name="movement">The direction of the movement in 2D</param>
         public void InputMove(Vector2 movement) {
             _movementInput = movement;
         }

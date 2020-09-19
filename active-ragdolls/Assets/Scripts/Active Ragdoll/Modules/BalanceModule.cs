@@ -22,6 +22,7 @@ namespace ActiveRagdoll {
         }
         private Config _config;
 
+        // Stabilizer Joint variables
         private GameObject _stabilizerGameobject;
         private Rigidbody _stabilizerRigidbody;
 
@@ -114,6 +115,7 @@ namespace ActiveRagdoll {
         }
 
         override public void StateChanged(in ActiveRagdollState state) {
+            // Reset the balance to match the new state requirements
             StopBalance();
             _config = state.balanceModuleConfig;
             InitBalance();
