@@ -10,5 +10,10 @@ namespace ActiveRagdoll {
         public BalanceModule.Config balanceModuleConfig;
         public MovementModule.Config movementModuleConfig;
         public InputModule.Config inputModuleConfig;
+        public CameraModule.Config cameraModuleConfig;
+
+        private void Awake() {
+            balanceModuleConfig = new BalanceModule.Config();
+        }
     }
 }

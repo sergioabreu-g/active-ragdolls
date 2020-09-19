@@ -16,7 +16,8 @@ namespace ActiveRagdoll {
                                   // to control its rotation, instead of freezing it into a vertical position
         }
         
-        [Serializable] public struct Config {
+        [Serializable]
+        public struct Config {
             public BALANCE_MODE balanceMode;
             public JointDriveConfig stabilizerJointConfig;
         }
@@ -30,8 +31,7 @@ namespace ActiveRagdoll {
             // Move the balancer to the players position (useless, just for debugging clarity)
             switch (_config.balanceMode) {
                 case BALANCE_MODE.FREEZE_ROTATIONS:
-                    _activeRagdoll.GetPhysicalTorso().MoveRotation(_activeRagdoll.GetAnimatedTorso().rotation);
-
+                    _activeRagdoll.GetPhysicalTorso().transform.rotation = _activeRagdoll.GetAnimatedTorso().rotation;
                     break;
 
                 case BALANCE_MODE.STABILIZER_JOINT:

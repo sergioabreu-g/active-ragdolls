@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,6 +22,14 @@ namespace ActiveRagdoll {
         public void OnMove(InputValue value) {
             Vector2 movement = value.Get<Vector2>();
             SendMessage("InputMove", movement, SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void OnLeftArm(InputValue value) {
+            SendMessage("InputLeftArm", value.Get<float>(), SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void OnRightArm(InputValue value) {
+            SendMessage("InputRightArm", value.Get<float>(), SendMessageOptions.DontRequireReceiver);
         }
     }
 } // namespace ActiveRagdoll

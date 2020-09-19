@@ -1,4 +1,6 @@
-﻿#if UNITY_EDITOR
+﻿#pragma warning disable 649
+
+#if UNITY_EDITOR
 #define DEBUG_MODE
 #endif
 
@@ -12,15 +14,14 @@ namespace ActiveRagdoll {
     [RequireComponent(typeof(BalanceModule))]
     [RequireComponent(typeof(MovementModule))]
     [RequireComponent(typeof(InputModule))]
+    [RequireComponent(typeof(CameraModule))]
     public class ActiveRagdoll : MonoBehaviour {
         // MODULES
         private List<Module> _modules;
 
         [Header("General")]
         [SerializeField] private ActiveRagdollState[] _states;
-        [Tooltip("Its forward vector defines the direction of the movement and look of the Active Ragdoll." +
-         "It's usually his camera, but it can be set to any transform.")]
-        [SerializeField] private Transform _director;
+
         private ActiveRagdollState _currentState;
 
         // For faster getting & setting methods for the states
@@ -30,9 +31,15 @@ namespace ActiveRagdoll {
         [SerializeField] private Transform _animatedTorso;
         [SerializeField] private Rigidbody _physicalTorso;
 
+        /// <summary>
+        /// The character's camera
+        /// </summary>
+        private Camera _camera;
+
         // Body info storage
         private Transform[] _animatedBones;
         private ConfigurableJoint[] _joints;
+        private Rigidbody[] _rigidbodies;
 
         // Animators of both bodies
         private Animator _animatedAnimator, _physicalAnimator;
@@ -54,6 +61,12 @@ namespace ActiveRagdoll {
 
             _animatedBones = _animatedTorso.GetComponentsInChildren<Transform>();
             _joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
+            _rigidbodies = _physicalTorso.GetComponentsInChildren<Rigidbody>();
+
+            foreach (Rigidbody rb in _rigidbodies) {
+                rb.solverIterations = _solverIterations;
+                rb.solverVelocityIterations = _velSolverIterations;
+            }
 
             var tempAnimators = GetComponentsInChildren<Animator>();
             _animatedAnimator = tempAnimators[0];
@@ -229,12 +242,23 @@ namespace ActiveRagdoll {
         }
 
         /// <summary>
-        /// Gets the director transform, whose forward vector is used to define the
-        /// movement and look direction.
+        /// Gets the character's camera
         /// </summary>
-        /// <returns>The director transform</returns>
-        public Transform GetDirector() {
-            return _director;
+        /// <returns>The character's camera</returns>
+        public Camera GetCamera() {
+            if (_camera == null)
+                Debug.LogError("No camera has been assigned to this Active Ragdoll." +
+                                "Maybe you're using a custom Camera and have forgotten to call 'ActiveRagdoll.SetCamera(yourCamera)'.");
+
+            return _camera;
+        }
+
+        /// <summary>
+        /// Sets the character's camera
+        /// </summary>
+        /// <param name="dir">The character's camera</param>
+        public void SetCamera(Camera camera) {
+            _camera = camera;
         }
     }
 } // namespace ActiveRagdoll

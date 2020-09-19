@@ -6,6 +6,7 @@ namespace ActiveRagdoll {
 
     public class MovementModule : Module {
         [Serializable] public struct Config {
+
         }
         private Config _config;
 
@@ -14,12 +15,16 @@ namespace ActiveRagdoll {
         private ConfigurableJoint[] _joints;
         private Transform[] _animatedBones;
 
+        // Animation variables
+        private AnimatorHelper _animatorHelper;
+
         // Movement variables
         private Vector2 _movementInput;
 
         override protected void LateAwake() {
             _joints = _activeRagdoll.GetJoints();
             _animatedBones = _activeRagdoll.GetAnimatedBones();
+            _animatorHelper = _activeRagdoll.GetAnimatorHelper();
 
             _initialJointsRotation = new Quaternion[_joints.Length];
 
@@ -52,9 +57,9 @@ namespace ActiveRagdoll {
         private void UpdateLookPoint() {
             // TEMPORAL
             Vector3 lookPoint = _activeRagdoll.GetAnimatedBone(HumanBodyBones.Head).position;
-            lookPoint += _activeRagdoll.GetDirector().forward;
+            lookPoint += _activeRagdoll.GetCamera().transform.forward;
 
-            _activeRagdoll.GetAnimatorHelper().LookAtPoint(lookPoint);
+            _animatorHelper.LookAtPoint(lookPoint);
         }
 
         private void UpdateMovement() {
@@ -64,7 +69,7 @@ namespace ActiveRagdoll {
             }
 
             float angleOffset = Vector2.SignedAngle(_movementInput, Vector2.up);
-            Vector3 targetForward = Quaternion.AngleAxis(angleOffset, Vector3.up) * Auxiliary.GetFloorProjection(_activeRagdoll.GetDirector().forward);
+            Vector3 targetForward = Quaternion.AngleAxis(angleOffset, Vector3.up) * Auxiliary.GetFloorProjection(_activeRagdoll.GetCamera().transform.forward);
             _activeRagdoll.GetAnimatedAnimator().transform.rotation = Quaternion.LookRotation(targetForward, Vector3.up);
 
             PlayAnimation("Moving", _movementInput.magnitude);
@@ -85,11 +90,27 @@ namespace ActiveRagdoll {
         }
 
         /// <summary>
-        /// Invoked by a message when the Input receives a movement order
+        /// Invoked by message when the Input receives a movement order
         /// </summary>
         /// <param name="movement">The direction of the movement in 2D</param>
         public void InputMove(Vector2 movement) {
             _movementInput = movement;
+        }
+
+        /// <summary>
+        /// Invoked by message when the Input receives a left arm IK order
+        /// </summary>
+        /// <param name="weight">How much influence the arm IK should have over the overall animation</param>
+        public void InputLeftArm(float weight) {
+            _animatorHelper.SetLeftArmIKWeight(weight);
+        }
+
+        /// <summary>
+        /// Invoked by message when the Input receives a right arm IK order
+        /// </summary>
+        /// <param name="weight">How much influence the arm IK should have over the overall animation</param>
+        public void InputRightArm(float weight) {
+            _animatorHelper.SetRightArmIKWeight(weight);
         }
     }
 } // namespace ActiveRagdoll

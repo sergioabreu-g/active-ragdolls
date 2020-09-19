@@ -19,3 +19,23 @@ MonoBehaviour:
       positionSpring: 2000
       positionDamper: 5
       maximumForce: Infinity
+  cameraModuleConfig:
+    _lookSesitivity: 1
+    _scrollSensitivity: 1
+    _invertY: 0
+    _invertX: 0
+    _smoothSpeed: 5
+    _smooth: 1
+    _improveSteepInclinations: 1
+    _inclinationAngle: 60
+    _inclinationDistance: 0.9
+    _minDistanceToLookedObject: 2
+    _minDistance: 2
+    _maxDistance: 5
+    _defaultDistance: 3
+    _minVerticalAngle: -60
+    _maxVerticalAngle: 60
+    _dontBlockCamera:
+      serializedVersion: 2
+      m_Bits: 256
+    _cameraRepositionOffset: 0.02
