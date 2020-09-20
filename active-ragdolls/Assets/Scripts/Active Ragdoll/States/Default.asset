@@ -19,6 +19,41 @@ MonoBehaviour:
       positionSpring: 2000
       positionDamper: 5
       maximumForce: Infinity
+  movementModuleConfig:
+    minCameraAngle: -40
+    maxCameraAngle: 60
+    minArmsAngle: -70
+    maxArmsAngle: 85
+    minLookAngle: -70
+    maxLookAngle: 70
+    lookAngleOffset: 0
+    armsAngleOffset: 0
+    armsRotationOffset: 50
+    armsSeparation: 0.7
+    armsDistance:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
   cameraModuleConfig:
     _lookSesitivity: 1
     _scrollSensitivity: 1
@@ -33,7 +68,7 @@ MonoBehaviour:
     _minDistance: 2
     _maxDistance: 5
     _defaultDistance: 3
-    _minVerticalAngle: -60
+    _minVerticalAngle: -40
     _maxVerticalAngle: 60
     _dontBlockCamera:
       serializedVersion: 2

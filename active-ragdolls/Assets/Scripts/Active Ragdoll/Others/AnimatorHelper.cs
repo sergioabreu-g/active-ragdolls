@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActiveRagdoll {
+    // Original author: Sergio Abreu García | https://sergioabreu.me
+
     /// <summary>
     /// Helper class that contains a lot of necessary functionality to control the animator,
     /// and more especifically the IK.
@@ -12,7 +14,7 @@ namespace ActiveRagdoll {
     public class AnimatorHelper : MonoBehaviour {
         private Animator _animator;
 
-        // Look variables
+        // ----- Look -----
         private enum LookMode {
             TARGET,
             POINT,
@@ -21,21 +23,19 @@ namespace ActiveRagdoll {
         private Transform _lookTarget;
         private Vector3 _lookPoint = Vector3.zero;
 
-        // Targets for the IK
+        // ----- IK Targets -----
         private Transform _targetsParent;
         private Transform _leftHandTarget, _rightHandTarget, _leftHandHint, _rightHandHint;
         private Transform _leftFootTarget, _rightFootTarget;
 
-        // These weights define how much influence the IK will have over the animation
-        private float _leftArmIKWeight = 0, _rightArmIKWeight = 0;
-        private float _leftLegIKWeight = 0, _rightLegIKWeight = 0;
+        /// <summary> How much influence the IK will have over the animation </summary>
+        private float _leftArmIKWeight = 0, _rightArmIKWeight = 0,
+                      _leftLegIKWeight = 0, _rightLegIKWeight = 0;
 
-        // How much the chest IK will influence the animation at its maximum
+        /// <summary> How much the chest IK will influence the animation at its maximum </summary>
         private float _chestMaxLookWeight = 0.5f;
 
-        // Transitions stop body extremities to 'snap' after quickly going from
-        // IK to animation. If the player stops pressing the arm button, for example,
-        // the arm will snap right back into the animation position if not smoothed.
+        /// <summary> Smooths the transition between IK an animation to avoid snapping </summary>
         private bool _smoothIKTransition = true;
         private float _ikTransitionSpeed = 10;
 
@@ -71,9 +71,6 @@ namespace ActiveRagdoll {
             UpdateIKTransitions();
         }
 
-        /// <summary>
-        /// Updates the IK weights to smoothly transition between IK and animations.
-        /// </summary>
         private void UpdateIKTransitions() {
             _currentLeftArmIKWeight = Mathf.Lerp(_currentLeftArmIKWeight, _leftArmIKWeight, Time.deltaTime * _ikTransitionSpeed);
             _currentLeftLegIKWeight = Mathf.Lerp(_currentLeftLegIKWeight, _leftLegIKWeight, Time.deltaTime * _ikTransitionSpeed);
@@ -81,7 +78,6 @@ namespace ActiveRagdoll {
             _currentRightLegIKWeight = Mathf.Lerp(_currentRightLegIKWeight, _rightLegIKWeight, Time.deltaTime * _ikTransitionSpeed);
         }
 
-        // Tells the Animator which weight, position and rotation values to use each frame/
         private void OnAnimatorIK(int layerIndex) {
             // Look
             _animator.SetLookAtWeight(1, ((_leftArmIKWeight + _rightArmIKWeight) / 2) * _chestMaxLookWeight, 1, 1, 0);

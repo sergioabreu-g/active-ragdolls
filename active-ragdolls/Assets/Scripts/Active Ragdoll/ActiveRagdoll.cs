@@ -16,32 +16,31 @@ namespace ActiveRagdoll {
     [RequireComponent(typeof(InputModule))]
     [RequireComponent(typeof(CameraModule))]
     public class ActiveRagdoll : MonoBehaviour {
-        // MODULES
+        // ----- MODULES -----
         private List<Module> _modules;
 
+        // ----- STATES -----
         [Header("General")]
+        [Tooltip("All the states this active ragdoll can switch between. The first of the list" +
+                "will be the initial one.")]
         [SerializeField] private ActiveRagdollState[] _states;
 
+        /// <summary> Dictionary with all the states for faster getters & setters. </summary>
+        private Dictionary<string, ActiveRagdollState> _statesDictionary;
         private ActiveRagdollState _currentState;
 
-        // For faster getting & setting methods for the states
-        private Dictionary<string, ActiveRagdollState> _statesDictionary;
+        private Camera _characterCamera;
 
+        // ----- BODY -----
         [Header("Body")]
         [SerializeField] private Transform _animatedTorso;
         [SerializeField] private Rigidbody _physicalTorso;
 
-        /// <summary>
-        /// The character's camera
-        /// </summary>
-        private Camera _camera;
-
-        // Body info storage
         private Transform[] _animatedBones;
         private ConfigurableJoint[] _joints;
         private Rigidbody[] _rigidbodies;
 
-        // Animators of both bodies
+        // ----- ANIMATORS -----
         private Animator _animatedAnimator, _physicalAnimator;
         private AnimatorHelper _animatorHelper;
 
@@ -49,6 +48,8 @@ namespace ActiveRagdoll {
         [Tooltip("To avoid overloading the physics engine, solver iterations are set higher only" +
                  "for the active ragdoll rigidbodies, instead of modifying the general physics configuration.")]
         [SerializeField] private int _solverIterations = 11, _velSolverIterations = 11;
+
+
 
         void Awake() {
             if (_states.Length <= 0)
@@ -74,7 +75,7 @@ namespace ActiveRagdoll {
 
             _animatorHelper = _animatedAnimator.gameObject.AddComponent<AnimatorHelper>();
 
-            // Get & Init all the Modules
+            // MODULES
             _modules = new List<Module>();
             GetComponents<Module>(_modules);
 
@@ -82,8 +83,8 @@ namespace ActiveRagdoll {
                 module.Initialize(this);
 
 
-            // Set the initial state
-            SetState(_states[0].name);
+            // Sets the initial state
+            SetCurrentState(_states[0].name);
 
 #if DEBUG_MODE
             Debug.Log("Active Ragdoll: " + _modules.Count + " Modules Initialized.");
@@ -94,16 +95,16 @@ namespace ActiveRagdoll {
             SyncAnimatedBody();
         }
 
-        /// <summary>
-        /// Updates the rotation and position of the animated body
-        /// to match the ones of the physical, so the IK movements
-        /// are in calculated in synchrony. e.g. when looking at something,
-        /// if the animated and physical bodies are not in the same spot and
-        /// with the same orientation, the head movement calculated by the IK
-        /// for the animated body won't match the movement the physical body
-        /// needs to look at the same thing.
-        /// </summary>
+        /// <summary> Updates the rotation and position of the animated body's root
+        /// to match the ones of the physical.</summary>
         private void SyncAnimatedBody() {
+            // This is needed for the IK movements to be synchronized between
+            // the animated and physical bodies. e.g. when looking at something,
+            // if the animated and physical bodies are not in the same spot and
+            // with the same orientation, the head movement calculated by the IK
+            // for the animated body will be different from the one the physical body
+            // needs to look at the same thing, so they will look at totally different places.
+
             _animatedAnimator.transform.position = _physicalTorso.position + (_animatedAnimator.transform.position - _animatedTorso.position);
         }
 
@@ -112,18 +113,14 @@ namespace ActiveRagdoll {
 
         // ------------------- GETTERS & SETTERS -------------------
 
-        /// <summary>
-        /// Gets the transform of the given ANIMATED BODY'S BONE
-        /// </summary>
+        /// <summary> Gets the transform of the given ANIMATED BODY'S BONE </summary>
         /// <param name="bone">Bone you want the transform of</param>
         /// <returns>The transform of the given ANIMATED bone</returns>
         public Transform GetAnimatedBone(HumanBodyBones bone) {
             return _animatedAnimator.GetBoneTransform(bone);
         }
 
-        /// <summary>
-        /// Gets the transform of the given PHYSICAL BODY'S BONE
-        /// </summary>
+        /// <summary> Gets the transform of the given PHYSICAL BODY'S BONE </summary>
         /// <param name="bone">Bone you want the transform of</param>
         /// <returns>The transform of the given PHYSICAL bone</returns>
         public Transform GetPhysicalBone(HumanBodyBones bone) {
@@ -146,58 +143,36 @@ namespace ActiveRagdoll {
             return _animatedTorso;
         }
 
-        /// <summary>
-        /// Gets all the physical body's joints
-        /// </summary>
-        /// <returns>All the physical body's joints</returns>
         public ConfigurableJoint[] GetJoints() {
             return _joints;
         }
 
-        /// <summary>
-        /// Gets all the animated body's bones
-        /// </summary>
+        /// <summary> Gets all the bone transforms of the ANIMATED BODY </summary>
         /// <returns>All the animated body's bones</returns>
         public Transform[] GetAnimatedBones() {
             return _animatedBones;
         }
 
-        /// <summary>
-        /// Gets the animator of the ANIMATED BODY
-        /// </summary>
+        /// <summary> Gets the animator of the ANIMATED BODY </summary>
         /// <returns>The animator of the ANIMATED BODY</returns>
         public Animator GetAnimatedAnimator() {
             return _animatedAnimator;
         }
 
-        /// <summary>
-        /// Gets the animator of the PHYSICAL BODY
-        /// </summary>
+        /// <summary>  Gets the animator of the PHYSICAL BODY </summary>
         /// <returns>The animator of the PHYSICAL BODY</returns>
         public Animator GetPhysicalAnimator() {
             return _physicalAnimator;
         }
 
-        /// <summary>
-        /// Gets the Animator Helper
-        /// </summary>
-        /// <returns>The Animator Helper</returns>
         public AnimatorHelper GetAnimatorHelper() {
             return _animatorHelper;
         }
 
-        /// <summary>
-        /// Gets all the states assigned to this Active Ragdoll
-        /// </summary>
-        /// <returns>All the states assigned to this Active Ragdoll</returns>
         public ActiveRagdollState[] GetStates() {
             return _states;
         }
 
-        /// <summary>
-        /// Gets all the states assigned to this Active Ragdoll
-        /// </summary>
-        /// <returns>All the states assigned to this Active Ragdoll</returns>
         public ActiveRagdollState GetState(string stateName) {
             if (_statesDictionary.ContainsKey(stateName))
                 return _statesDictionary[stateName];
@@ -208,26 +183,15 @@ namespace ActiveRagdoll {
             return null;
         }
 
-        /// <summary>
-        /// Gets the currently active state for this Active Ragdoll
-        /// </summary>
-        /// <returns>The currently active state for this Active Ragdoll</returns>
         public ActiveRagdollState GetCurrentState() {
             return _currentState;
         }
 
-        /// <summary>
-        /// Gets the name of the currently active state for this Active Ragdoll
-        /// </summary>
-        /// <returns>The name of the currently active state for this Active Ragdoll</returns>
         public string GetCurrentStateName() {
             return _currentState.name;
         }
 
-        /// <summary>
-        /// Sets the given state as the current/active one
-        /// </summary>
-        public void SetState(string stateName) {
+        public void SetCurrentState(string stateName) {
             if (_statesDictionary.ContainsKey(stateName))
                 _currentState = _statesDictionary[stateName];
             else {
@@ -241,24 +205,16 @@ namespace ActiveRagdoll {
                 mod.StateChanged(_currentState);
         }
 
-        /// <summary>
-        /// Gets the character's camera
-        /// </summary>
-        /// <returns>The character's camera</returns>
-        public Camera GetCamera() {
-            if (_camera == null)
+        public Camera GetCharacterCamera() {
+            if (_characterCamera == null)
                 Debug.LogError("No camera has been assigned to this Active Ragdoll." +
                                 "Maybe you're using a custom Camera and have forgotten to call 'ActiveRagdoll.SetCamera(yourCamera)'.");
 
-            return _camera;
+            return _characterCamera;
         }
 
-        /// <summary>
-        /// Sets the character's camera
-        /// </summary>
-        /// <param name="dir">The character's camera</param>
-        public void SetCamera(Camera camera) {
-            _camera = camera;
+        public void SetCharacterCamera(Camera camera) {
+            _characterCamera = camera;
         }
     }
 } // namespace ActiveRagdoll

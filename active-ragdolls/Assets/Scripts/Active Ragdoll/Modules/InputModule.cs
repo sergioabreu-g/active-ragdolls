@@ -11,6 +11,8 @@ namespace ActiveRagdoll {
         }
         private Config _config;
 
+
+
         override public void StateChanged(in ActiveRagdollState state) {
             _config = state.inputModuleConfig;
         }
