@@ -73,3 +73,6 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 256
     _cameraRepositionOffset: 0.02
+  gripModuleConfig:
+    leftArmWeightThreshold: 0.5
+    rightArmWeightThreshold: 0.5

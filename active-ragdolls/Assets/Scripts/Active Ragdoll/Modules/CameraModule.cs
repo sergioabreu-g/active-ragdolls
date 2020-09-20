@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace ActiveRagdoll {
-    // Original author: Sergio Abreu García | https://sergioabreu.me
+    // Author: Sergio Abreu García | https://sergioabreu.me
 
     public class CameraModule : Module {
         [Serializable]

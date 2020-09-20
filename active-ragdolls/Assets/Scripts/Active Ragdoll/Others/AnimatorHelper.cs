@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActiveRagdoll {
-    // Original author: Sergio Abreu García | https://sergioabreu.me
+    // Author: Sergio Abreu García | https://sergioabreu.me
 
     /// <summary>
     /// Helper class that contains a lot of necessary functionality to control the animator,

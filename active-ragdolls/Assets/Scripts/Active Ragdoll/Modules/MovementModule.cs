@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace ActiveRagdoll {
-    // Original author: Sergio Abreu García | https://sergioabreu.me
+    // Author: Sergio Abreu García | https://sergioabreu.me
 
     public class MovementModule : Module {
         [Serializable] public struct Config {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActiveRagdoll {
-    // Original author: Sergio Abreu García | https://sergioabreu.me
+    // Author: Sergio Abreu García | https://sergioabreu.me
 
     [CreateAssetMenu(fileName = "Active Ragdoll State", menuName = "ScriptableObjects/Active Ragdoll State", order = 1)]
     public partial class ActiveRagdollState : ScriptableObject {
@@ -13,5 +13,6 @@ namespace ActiveRagdoll {
         public MovementModule.Config movementModuleConfig;
         public InputModule.Config inputModuleConfig;
         public CameraModule.Config cameraModuleConfig;
+        public GripModule.Config gripModuleConfig;
     }
 }

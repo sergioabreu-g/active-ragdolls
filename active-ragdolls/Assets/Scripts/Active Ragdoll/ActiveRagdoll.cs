@@ -9,18 +9,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActiveRagdoll {
-    // Original author: Sergio Abreu García | https://sergioabreu.me
+    // Author: Sergio Abreu García | https://sergioabreu.me
 
     [RequireComponent(typeof(BalanceModule))]
     [RequireComponent(typeof(MovementModule))]
     [RequireComponent(typeof(InputModule))]
     [RequireComponent(typeof(CameraModule))]
     public class ActiveRagdoll : MonoBehaviour {
-        // ----- MODULES -----
-        private List<Module> _modules;
+        // ----- GENERAL -----
+        [Header("Advanced")]
+        [Tooltip("To avoid overloading the physics engine, solver iterations are set higher only" +
+                 "for the active ragdoll rigidbodies, instead of modifying the general physics configuration.")]
+        [SerializeField] private int _solverIterations = 11, _velSolverIterations = 11;
+
+        private static uint _ID_COUNT = 0;
+        /// <summary> The unique ID of this Active Ragdoll instance. </summary>
+        private uint _id;
 
         // ----- STATES -----
-        [Header("General")]
+        [Header("States")]
         [Tooltip("All the states this active ragdoll can switch between. The first of the list" +
                 "will be the initial one.")]
         [SerializeField] private ActiveRagdollState[] _states;
@@ -30,6 +37,9 @@ namespace ActiveRagdoll {
         private ActiveRagdollState _currentState;
 
         private Camera _characterCamera;
+
+        // ----- MODULES -----
+        private List<Module> _modules;
 
         // ----- BODY -----
         [Header("Body")]
@@ -44,14 +54,11 @@ namespace ActiveRagdoll {
         private Animator _animatedAnimator, _physicalAnimator;
         private AnimatorHelper _animatorHelper;
 
-        [Header("Advanced")]
-        [Tooltip("To avoid overloading the physics engine, solver iterations are set higher only" +
-                 "for the active ragdoll rigidbodies, instead of modifying the general physics configuration.")]
-        [SerializeField] private int _solverIterations = 11, _velSolverIterations = 11;
-
 
 
         void Awake() {
+            _id = _ID_COUNT++;
+
             if (_states.Length <= 0)
                 Debug.LogError("Active Ragdoll cannot work without any assigned states. Add at least one state in the inspector.");
             else {
@@ -112,6 +119,10 @@ namespace ActiveRagdoll {
 
 
         // ------------------- GETTERS & SETTERS -------------------
+
+        public uint GetID() {
+            return _id;
+        }
 
         /// <summary> Gets the transform of the given ANIMATED BODY'S BONE </summary>
         /// <param name="bone">Bone you want the transform of</param>

@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace ActiveRagdoll {
-    // Original author: Sergio Abreu García | https://sergioabreu.me
+    // Author: Sergio Abreu García | https://sergioabreu.me
 
     /// <summary> The active ragdoll functionality is subdivided in modules, so
     /// everything is easier debug and mantain. </summary>
