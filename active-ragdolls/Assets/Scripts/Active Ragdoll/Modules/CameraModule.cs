@@ -24,7 +24,7 @@ namespace ActiveRagdoll {
                     " increasing visibility downwards.")]
             public bool _improveSteepInclinations;
             [Range(0, 90)] public float _inclinationAngle;
-            public float _inclinationDistance, _minDistanceToLookedObject;
+            public float _inclinationDistance;
 
             [Header("--- DISTANCES ---")]
             public float _minDistance;
@@ -68,10 +68,6 @@ namespace ActiveRagdoll {
         }
 
         void Update() {
-            // If the camera can't reposition properly, it will reset to its last pos. Avoids getting stuck.
-            Vector3 previousPos = _camera.transform.position;
-            Vector2 previousMouse = _mouse;
-
             _mouse.x = Mathf.Repeat(_mouse.x + _mouseDelta.x * (_config._invertX ? -1 : 1) * _config._lookSesitivity, 360);
             _mouse.y = Mathf.Clamp(_mouse.y + _mouseDelta.y * (_config._invertY ? 1 : -1) * _config._lookSesitivity,
                                     _config._minVerticalAngle, _config._maxVerticalAngle);
@@ -103,12 +99,6 @@ namespace ActiveRagdoll {
             if (hit) {
                 _camera.transform.position = hitInfo.point + (hitInfo.normal * _config._cameraRepositionOffset);
                 _camera.transform.LookAt(_smoothedLookPoint);
-            }
-
-            if (Vector3.Distance(_lookPoint.position, _camera.transform.position) <= _config._minDistanceToLookedObject) {
-                _camera.transform.position = previousPos;
-                _camera.transform.LookAt(_smoothedLookPoint);
-                _mouse = previousMouse;
             }
         }
 

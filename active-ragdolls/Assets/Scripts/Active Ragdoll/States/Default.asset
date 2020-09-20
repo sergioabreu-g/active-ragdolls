@@ -28,7 +28,7 @@ MonoBehaviour:
     maxLookAngle: 70
     lookAngleOffset: 0
     armsAngleOffset: 0
-    armsRotationOffset: 50
+    handsRotationOffset: 0
     armsSeparation: 0.7
     armsDistance:
       serializedVersion: 2
@@ -62,14 +62,13 @@ MonoBehaviour:
     _smoothSpeed: 5
     _smooth: 1
     _improveSteepInclinations: 1
-    _inclinationAngle: 60
-    _inclinationDistance: 0.9
-    _minDistanceToLookedObject: 2
+    _inclinationAngle: 30
+    _inclinationDistance: 1.5
     _minDistance: 2
     _maxDistance: 5
-    _defaultDistance: 3
-    _minVerticalAngle: -40
-    _maxVerticalAngle: 60
+    _initialDistance: 3.5
+    _minVerticalAngle: -50
+    _maxVerticalAngle: 70
     _dontBlockCamera:
       serializedVersion: 2
       m_Bits: 256
