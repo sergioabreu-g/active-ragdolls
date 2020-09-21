@@ -33,7 +33,7 @@ namespace ActiveRagdoll {
             _rightGrip.Init(_activeRagdoll, _config.onlyUseTriggers, _config.canGripYourself);
         }
 
-        override public void StateChanged(in ActiveRagdollState state) {
+        override public void ConfigChanged(in ActiveRagdollConfig state) {
             _config = state.gripModuleConfig;
         }
 

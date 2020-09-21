@@ -8,8 +8,8 @@ namespace ActiveRagdoll {
 
     public class BalanceModule : Module {
         public enum BALANCE_MODE {
-            FREEZE_ROTATIONS,
             STABILIZER_JOINT,
+            FREEZE_ROTATIONS,
             MANUAL_STABILIZATION,
         }
 
@@ -30,26 +30,6 @@ namespace ActiveRagdoll {
         private Rigidbody _stabilizerRigidbody;
 
 
-
-        void FixedUpdate() {
-            switch (_config.balanceMode) {
-                case BALANCE_MODE.FREEZE_ROTATIONS:
-                    _activeRagdoll.GetPhysicalTorso().transform.rotation =
-                                                _activeRagdoll.GetAnimatedTorso().rotation;
-                    break;
-
-                case BALANCE_MODE.STABILIZER_JOINT:
-                    // Move stabilizer to player (useless, but improves clarity)
-                    _stabilizerRigidbody.MovePosition(_activeRagdoll.GetPhysicalTorso().position);
-                    _stabilizerRigidbody.MoveRotation(_activeRagdoll.GetAnimatedTorso().rotation);
-                    break;
-
-                case BALANCE_MODE.MANUAL_STABILIZATION:
-                    break;
-
-                default: break;
-            }
-        }
 
         /// <summary> Initilizes depending on the balance mode selected </summary>
         private void InitBalance() {
@@ -111,7 +91,27 @@ namespace ActiveRagdoll {
             joint.angularYZDrive = jointDrive;
         }
 
-        override public void StateChanged(in ActiveRagdollState state) {
+        void FixedUpdate() {
+            switch (_config.balanceMode) {
+                case BALANCE_MODE.FREEZE_ROTATIONS:
+                    _activeRagdoll.GetPhysicalTorso().transform.rotation =
+                                                _activeRagdoll.GetAnimatedTorso().rotation;
+                    break;
+
+                case BALANCE_MODE.STABILIZER_JOINT:
+                    // Move stabilizer to player (useless, but improves clarity)
+                    _stabilizerRigidbody.MovePosition(_activeRagdoll.GetPhysicalTorso().position);
+                    _stabilizerRigidbody.MoveRotation(_activeRagdoll.GetAnimatedTorso().rotation);
+                    break;
+
+                case BALANCE_MODE.MANUAL_STABILIZATION:
+                    break;
+
+                default: break;
+            }
+        }
+
+        override public void ConfigChanged(in ActiveRagdollConfig state) {
             // Reset the balance to match the new state requirements
             StopBalance();
             _config = state.balanceModuleConfig;

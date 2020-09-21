@@ -26,7 +26,7 @@ namespace ActiveRagdoll {
         /// <summary> Method called by the ActiveRagdoll when its state changes.
         /// Used by each module to update itself automatically. </summary>
         /// <param name="state">The new active state of the Active Ragdoll</param>
-        virtual public void StateChanged(in ActiveRagdollState state) { }
+        virtual public void ConfigChanged(in ActiveRagdollConfig state) { }
     }
 
 

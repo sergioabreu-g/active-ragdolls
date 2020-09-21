@@ -17,24 +17,18 @@ namespace ActiveRagdoll {
     [RequireComponent(typeof(CameraModule))]
     public class ActiveRagdoll : MonoBehaviour {
         // ----- GENERAL -----
-        [Header("Advanced")]
+        [Header("--- GENERAL ---")]
+        [SerializeField] private ActiveRagdollConfig _config;
+
+        [Header("   Advanced")]
         [Tooltip("To avoid overloading the physics engine, solver iterations are set higher only" +
                  "for the active ragdoll rigidbodies, instead of modifying the general physics configuration.")]
-        [SerializeField] private int _solverIterations = 11, _velSolverIterations = 11;
+        [SerializeField] private int _solverIterations = 11;
+        [SerializeField] private int _velSolverIterations = 11;
 
         private static uint _ID_COUNT = 0;
         /// <summary> The unique ID of this Active Ragdoll instance. </summary>
         private uint _id;
-
-        // ----- STATES -----
-        [Header("States")]
-        [Tooltip("All the states this active ragdoll can switch between. The first of the list" +
-                "will be the initial one.")]
-        [SerializeField] private ActiveRagdollState[] _states;
-
-        /// <summary> Dictionary with all the states for faster getters & setters. </summary>
-        private Dictionary<string, ActiveRagdollState> _statesDictionary;
-        private ActiveRagdollState _currentState;
 
         private Camera _characterCamera;
 
@@ -42,7 +36,7 @@ namespace ActiveRagdoll {
         private List<Module> _modules;
 
         // ----- BODY -----
-        [Header("Body")]
+        [Header("--- BODY ---")]
         [SerializeField] private Transform _animatedTorso;
         [SerializeField] private Rigidbody _physicalTorso;
 
@@ -58,14 +52,6 @@ namespace ActiveRagdoll {
 
         void Awake() {
             _id = _ID_COUNT++;
-
-            if (_states.Length <= 0)
-                Debug.LogError("Active Ragdoll cannot work without any assigned states. Add at least one state in the inspector.");
-            else {
-                _statesDictionary = new Dictionary<string, ActiveRagdollState>();
-                foreach (ActiveRagdollState state in _states)
-                    _statesDictionary.Add(state.name, state);
-            }
 
             _animatedBones = _animatedTorso.GetComponentsInChildren<Transform>();
             _joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
@@ -90,8 +76,8 @@ namespace ActiveRagdoll {
                 module.Initialize(this);
 
 
-            // Sets the initial state
-            SetCurrentState(_states[0].name);
+            // Sets the configuration for each module
+            SetConfig(_config);
 
 #if DEBUG_MODE
             Debug.Log("Active Ragdoll: " + _modules.Count + " Modules Initialized.");
@@ -158,6 +144,10 @@ namespace ActiveRagdoll {
             return _joints;
         }
 
+        public Rigidbody[] GetRigidbodies() {
+            return _rigidbodies;
+        }
+
         /// <summary> Gets all the bone transforms of the ANIMATED BODY </summary>
         /// <returns>All the animated body's bones</returns>
         public Transform[] GetAnimatedBones() {
@@ -180,40 +170,21 @@ namespace ActiveRagdoll {
             return _animatorHelper;
         }
 
-        public ActiveRagdollState[] GetStates() {
-            return _states;
-        }
-
-        public ActiveRagdollState GetState(string stateName) {
-            if (_statesDictionary.ContainsKey(stateName))
-                return _statesDictionary[stateName];
-
-#if DEBUG_MODE
-            Debug.LogWarning("State '" + stateName + "' not found when calling 'GetState()'. Returning null.");
-#endif
-            return null;
-        }
-
-        public ActiveRagdollState GetCurrentState() {
-            return _currentState;
+        public ActiveRagdollConfig GetCurrentState() {
+            return _config;
         }
 
         public string GetCurrentStateName() {
-            return _currentState.name;
+            return _config.name;
         }
 
-        public void SetCurrentState(string stateName) {
-            if (_statesDictionary.ContainsKey(stateName))
-                _currentState = _statesDictionary[stateName];
-            else {
-#if DEBUG_MODE
-                Debug.LogWarning("State '" + stateName + "' not found when calling 'SetState()'. Current state wasn't changed.");
-#endif
-                return;
-            }
-
+        public void SetConfig(ActiveRagdollConfig config) {
             foreach (Module mod in _modules)
-                mod.StateChanged(_currentState);
+                mod.ConfigChanged(_config);
+        }
+
+        public ActiveRagdollConfig GetConfig() {
+            return _config;
         }
 
         public Camera GetCharacterCamera() {

@@ -6,7 +6,7 @@ namespace ActiveRagdoll {
     // Author: Sergio Abreu García | https://sergioabreu.me
 
     [CreateAssetMenu(fileName = "Active Ragdoll State", menuName = "ScriptableObjects/Active Ragdoll State", order = 1)]
-    public partial class ActiveRagdollState : ScriptableObject {
+    public class ActiveRagdollConfig : ScriptableObject {
         public string stateName;
 
         public BalanceModule.Config balanceModuleConfig;

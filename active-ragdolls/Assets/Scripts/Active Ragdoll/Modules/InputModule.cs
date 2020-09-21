@@ -13,7 +13,7 @@ namespace ActiveRagdoll {
 
 
 
-        override public void StateChanged(in ActiveRagdollState state) {
+        override public void ConfigChanged(in ActiveRagdollConfig state) {
             _config = state.inputModuleConfig;
         }
 
