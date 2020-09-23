@@ -43,7 +43,7 @@ namespace ActiveRagdoll {
         private float _currentLeftLegIKWeight = 0, _currentRightLegIKWeight = 0;
 
         /// <summary> How much the chest IK will influence the animation at its maximum </summary>
-        public float _chestMaxLookWeight { get; set; }
+        public float _chestMaxLookWeight { get; set; } = 0.5f;
 
         /// <summary> Smooths the transition between IK an animation to avoid snapping </summary>
         public bool SmoothIKTransitions { get; set; } = true;

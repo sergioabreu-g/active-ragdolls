@@ -33,17 +33,16 @@ namespace ActiveRagdoll {
         public ConfigurableJoint[] Joints { get; private set; }
         public Rigidbody[] Rigidbodies { get; private set; }
 
+        /// <summary> The direction where this character should be going/aiming.
+        /// Generally set by the CameraModule and used by the MovementModule.</summary>
+        public Vector3 TargetDirection { get; set; }
+
         [Header("--- ANIMATORS ---")]
         [SerializeField] private Animator _animatedAnimator;
         [SerializeField] private Animator _physicalAnimator;
         public Animator AnimatedAnimator { get { return _animatedAnimator; }
                                            private set { _animatedAnimator = value; } }
         public AnimatorHelper AnimatorHelper { get; private set; }
-
-        [Header("--- OTHERS ---")]
-        [Tooltip("Where the camera should point to. Head by default.")]
-        [SerializeField] private Transform _cameraLookPoint;
-        private Camera _characterCamera;
 
         private void OnValidate() {
             // Automatically retrieve the necessary references
@@ -59,9 +58,6 @@ namespace ActiveRagdoll {
             AnimatedBones = _animatedTorso.GetComponentsInChildren<Transform>();
             Joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
             Rigidbodies = _physicalTorso.GetComponentsInChildren<Rigidbody>();
-
-            if (_cameraLookPoint == null)
-                _cameraLookPoint = _physicalAnimator.GetBoneTransform(HumanBodyBones.Head);
         }
 
         private void Awake() {
@@ -108,24 +104,6 @@ namespace ActiveRagdoll {
         /// <returns>The transform of the given PHYSICAL bone</returns>
         public Transform GetPhysicalBone(HumanBodyBones bone) {
             return _physicalAnimator.GetBoneTransform(bone);
-        }
-
-
-        // TEMPORAL
-        public Camera GetCharacterCamera() {
-            if (_characterCamera == null)
-                Debug.LogError("No camera has been assigned to this Active Ragdoll." +
-                                "Maybe you're using a custom Camera and have forgotten to call 'ActiveRagdoll.SetCamera(yourCamera)'.");
-
-            return _characterCamera;
-        }
-
-        public void SetCharacterCamera(Camera camera) {
-            _characterCamera = camera;
-        }
-
-        public Transform GetCameraCustomLookPoint() {
-            return _cameraLookPoint;
         }
     }
 } // namespace ActiveRagdoll

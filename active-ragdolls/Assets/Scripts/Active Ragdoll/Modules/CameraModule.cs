@@ -9,11 +9,13 @@ namespace ActiveRagdoll {
 
     public class CameraModule : Module {
         [Header("--- GENERAL ---")]
+        [Tooltip("Where the camera should point to. Head by default.")]
+        public Transform _lookPoint;
+
         public float lookSensitivity = 1;
         public float scrollSensitivity = 1;
         public bool invertY = false, invertX = false;
 
-        private Transform _lookPoint;
         private GameObject _camera;
         private Vector2 _cameraRotation;
         private Vector2 _inputDelta;
@@ -53,16 +55,15 @@ namespace ActiveRagdoll {
         [Tooltip("How far to reposition the camera from an obstacle.")]
         public float cameraRepositionOffset = 0.15f;
 
-
-
-        void Start() {
-            _lookPoint = _activeRagdoll.GetCameraCustomLookPoint();
+        private void OnValidate() {
             if (_lookPoint == null)
                 _lookPoint = _activeRagdoll.GetPhysicalBone(HumanBodyBones.Head);
+        }
 
+        void Start() {
             _camera = new GameObject("Active Ragdoll Camera", typeof(UnityEngine.Camera));
             _camera.transform.parent = transform;
-            _activeRagdoll.SetCharacterCamera(_camera.GetComponent<Camera>());
+            _activeRagdoll.TargetDirection = _camera.transform.forward;
 
             _smoothedLookPoint = _lookPoint.position;
             _currentDistance = initialDistance;
@@ -74,6 +75,8 @@ namespace ActiveRagdoll {
             UpdateCameraInput();
             UpdateCameraPosRot();
             AvoidObstacles();
+
+            _activeRagdoll.TargetDirection = _camera.transform.forward;
         }
 
         private void UpdateCameraInput() {
