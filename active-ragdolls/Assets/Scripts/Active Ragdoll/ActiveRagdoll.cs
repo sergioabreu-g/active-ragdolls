@@ -4,6 +4,7 @@
 #define DEBUG_MODE
 #endif
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,80 +12,70 @@ using UnityEngine;
 namespace ActiveRagdoll {
     // Author: Sergio Abreu García | https://sergioabreu.me
 
-    [RequireComponent(typeof(BalanceModule))]
-    [RequireComponent(typeof(MovementModule))]
-    [RequireComponent(typeof(InputModule))]
-    [RequireComponent(typeof(CameraModule))]
     public class ActiveRagdoll : MonoBehaviour {
-        // ----- GENERAL -----
         [Header("--- GENERAL ---")]
-        [SerializeField] private ActiveRagdollConfig _config;
+        [SerializeField] private int _solverIterations;
+        [SerializeField] private int _velSolverIterations;
+        public int SolverIterations { get { return _solverIterations; } }
+        public int VelSolverIterations { get { return _velSolverIterations; } }
 
-        [Header("   Advanced")]
-        [Tooltip("To avoid overloading the physics engine, solver iterations are set higher only" +
-                 "for the active ragdoll rigidbodies, instead of modifying the general physics configuration.")]
-        [SerializeField] private int _solverIterations = 11;
-        [SerializeField] private int _velSolverIterations = 11;
-
-        private static uint _ID_COUNT = 0;
         /// <summary> The unique ID of this Active Ragdoll instance. </summary>
-        private uint _id;
+        public uint ID { get; private set; }
+        private static uint _ID_COUNT = 0;
 
-        private Camera _characterCamera;
-
-        // ----- MODULES -----
-        private List<Module> _modules;
-
-        // ----- BODY -----
         [Header("--- BODY ---")]
         [SerializeField] private Transform _animatedTorso;
         [SerializeField] private Rigidbody _physicalTorso;
+        public Transform AnimatedTorso { get { return _animatedTorso; } }
+        public Rigidbody PhysicalTorso { get { return _physicalTorso; } }
 
-        private Transform[] _animatedBones;
-        private ConfigurableJoint[] _joints;
-        private Rigidbody[] _rigidbodies;
+        public Transform[] AnimatedBones { get; private set; }
+        public ConfigurableJoint[] Joints { get; private set; }
+        public Rigidbody[] Rigidbodies { get; private set; }
 
-        // ----- ANIMATORS -----
-        private Animator _animatedAnimator, _physicalAnimator;
-        private AnimatorHelper _animatorHelper;
+        [Header("--- ANIMATORS ---")]
+        [SerializeField] private Animator _animatedAnimator;
+        [SerializeField] private Animator _physicalAnimator;
+        public Animator AnimatedAnimator { get { return _animatedAnimator; }
+                                           private set { _animatedAnimator = value; } }
+        public AnimatorHelper AnimatorHelper { get; private set; }
 
+        [Header("--- OTHERS ---")]
+        [Tooltip("Where the camera should point to. Head by default.")]
+        [SerializeField] private Transform _cameraLookPoint;
+        private Camera _characterCamera;
 
+        private void OnValidate() {
+            // Automatically retrieve the necessary references
+            var animators = GetComponentsInChildren<Animator>();
+            if (_animatedAnimator == null) _animatedAnimator = animators[0];
+            if (_physicalAnimator == null) _physicalAnimator = animators[1];
 
-        void Awake() {
-            _id = _ID_COUNT++;
+            if (_animatedTorso == null)
+                _animatedTorso = _animatedAnimator.GetBoneTransform(HumanBodyBones.Hips);
+            if (_physicalTorso == null)
+                _physicalTorso = _physicalAnimator.GetBoneTransform(HumanBodyBones.Hips).GetComponent<Rigidbody>();
 
-            _animatedBones = _animatedTorso.GetComponentsInChildren<Transform>();
-            _joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
-            _rigidbodies = _physicalTorso.GetComponentsInChildren<Rigidbody>();
+            AnimatedBones = _animatedTorso.GetComponentsInChildren<Transform>();
+            Joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
+            Rigidbodies = _physicalTorso.GetComponentsInChildren<Rigidbody>();
 
-            foreach (Rigidbody rb in _rigidbodies) {
+            if (_cameraLookPoint == null)
+                _cameraLookPoint = _physicalAnimator.GetBoneTransform(HumanBodyBones.Head);
+        }
+
+        private void Awake() {
+            ID = _ID_COUNT++;
+
+            foreach (Rigidbody rb in Rigidbodies) {
                 rb.solverIterations = _solverIterations;
                 rb.solverVelocityIterations = _velSolverIterations;
             }
 
-            var tempAnimators = GetComponentsInChildren<Animator>();
-            _animatedAnimator = tempAnimators[0];
-            _physicalAnimator = tempAnimators[1];
-
-            _animatorHelper = _animatedAnimator.gameObject.AddComponent<AnimatorHelper>();
-
-            // MODULES
-            _modules = new List<Module>();
-            GetComponents<Module>(_modules);
-
-            foreach (Module module in _modules)
-                module.Initialize(this);
-
-
-            // Sets the configuration for each module
-            SetConfig(_config);
-
-#if DEBUG_MODE
-            Debug.Log("Active Ragdoll: " + _modules.Count + " Modules Initialized.");
-#endif
+            AnimatorHelper = _animatedAnimator.gameObject.AddComponent<AnimatorHelper>();
         }
 
-        void FixedUpdate() {
+        private void FixedUpdate() {
             SyncAnimatedBody();
         }
 
@@ -98,17 +89,12 @@ namespace ActiveRagdoll {
             // for the animated body will be different from the one the physical body
             // needs to look at the same thing, so they will look at totally different places.
 
-            _animatedAnimator.transform.position = _physicalTorso.position + (_animatedAnimator.transform.position - _animatedTorso.position);
+            _animatedAnimator.transform.position =_physicalTorso.position
+                                + (_animatedAnimator.transform.position - _animatedTorso.position);
         }
-
-
 
 
         // ------------------- GETTERS & SETTERS -------------------
-
-        public uint GetID() {
-            return _id;
-        }
 
         /// <summary> Gets the transform of the given ANIMATED BODY'S BONE </summary>
         /// <param name="bone">Bone you want the transform of</param>
@@ -124,69 +110,8 @@ namespace ActiveRagdoll {
             return _physicalAnimator.GetBoneTransform(bone);
         }
 
-        /// <summary>
-        /// Gets the Rigidboy of the physical body's torso
-        /// </summary>
-        /// <returns>The Rigidboy of the physical body's torso</returns>
-        public Rigidbody GetPhysicalTorso() {
-            return _physicalTorso;
-        }
 
-        /// <summary>
-        /// Gets the Transform of the animated body's torso
-        /// </summary>
-        /// <returns>The Transform of the animated body's torso</returns>
-        public Transform GetAnimatedTorso() {
-            return _animatedTorso;
-        }
-
-        public ConfigurableJoint[] GetJoints() {
-            return _joints;
-        }
-
-        public Rigidbody[] GetRigidbodies() {
-            return _rigidbodies;
-        }
-
-        /// <summary> Gets all the bone transforms of the ANIMATED BODY </summary>
-        /// <returns>All the animated body's bones</returns>
-        public Transform[] GetAnimatedBones() {
-            return _animatedBones;
-        }
-
-        /// <summary> Gets the animator of the ANIMATED BODY </summary>
-        /// <returns>The animator of the ANIMATED BODY</returns>
-        public Animator GetAnimatedAnimator() {
-            return _animatedAnimator;
-        }
-
-        /// <summary>  Gets the animator of the PHYSICAL BODY </summary>
-        /// <returns>The animator of the PHYSICAL BODY</returns>
-        public Animator GetPhysicalAnimator() {
-            return _physicalAnimator;
-        }
-
-        public AnimatorHelper GetAnimatorHelper() {
-            return _animatorHelper;
-        }
-
-        public ActiveRagdollConfig GetCurrentState() {
-            return _config;
-        }
-
-        public string GetCurrentStateName() {
-            return _config.name;
-        }
-
-        public void SetConfig(ActiveRagdollConfig config) {
-            foreach (Module mod in _modules)
-                mod.ConfigChanged(_config);
-        }
-
-        public ActiveRagdollConfig GetConfig() {
-            return _config;
-        }
-
+        // TEMPORAL
         public Camera GetCharacterCamera() {
             if (_characterCamera == null)
                 Debug.LogError("No camera has been assigned to this Active Ragdoll." +
@@ -197,6 +122,10 @@ namespace ActiveRagdoll {
 
         public void SetCharacterCamera(Camera camera) {
             _characterCamera = camera;
+        }
+
+        public Transform GetCameraCustomLookPoint() {
+            return _cameraLookPoint;
         }
     }
 } // namespace ActiveRagdoll

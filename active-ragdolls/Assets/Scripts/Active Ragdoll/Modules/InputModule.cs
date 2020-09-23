@@ -6,19 +6,6 @@ namespace ActiveRagdoll {
     // Author: Sergio Abreu García | https://sergioabreu.me
 
     public class InputModule : Module {
-        [Serializable] public struct Config {
-
-        }
-        private Config _config;
-
-
-
-        override public void ConfigChanged(in ActiveRagdollConfig state) {
-            _config = state.inputModuleConfig;
-        }
-
-
-
         // ---------- INPUT HANDLERS ----------
 
         public void OnMove(InputValue value) {
