@@ -33,6 +33,7 @@ namespace ActiveRagdoll {
         public Transform RightFootTarget { get; private set; }
 
         /// <summary> How much influence the IK will have over the animation </summary>
+        public float LookIKWeight { get; set; }
         public float LeftArmIKWeight { get; set; }
         public float RightArmIKWeight { get; set; }
         public float LeftLegIKWeight { get; set; }
@@ -93,7 +94,7 @@ namespace ActiveRagdoll {
 
         private void OnAnimatorIK(int layerIndex) {
             // Look
-            _animator.SetLookAtWeight(1, ((LeftArmIKWeight + RightArmIKWeight) / 2) * _chestMaxLookWeight, 1, 1, 0);
+            _animator.SetLookAtWeight(LookIKWeight, ((LeftArmIKWeight + RightArmIKWeight) / 2) * _chestMaxLookWeight, 1, 1, 0);
 
             Vector3 lookPos = Vector3.zero;
             if (CurrentLookMode == LookMode.TARGET) lookPos = LookTarget.position;
