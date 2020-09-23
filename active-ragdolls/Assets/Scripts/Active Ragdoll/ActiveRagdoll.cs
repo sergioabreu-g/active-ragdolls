@@ -1,9 +1,5 @@
 ﻿#pragma warning disable 649
 
-#if UNITY_EDITOR
-#define DEBUG_MODE
-#endif
-
 using System;
 using System.Collections;
 using System.Collections.Generic;

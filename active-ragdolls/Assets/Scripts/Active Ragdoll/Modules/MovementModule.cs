@@ -51,7 +51,7 @@ namespace ActiveRagdoll {
         public AnimationCurve armsDistance;
 
         private Vector3 _armsDir, _lookDir, _targetDir, _targetDir2D;
-        private Transform _animTorso, _physTorso, _chest;
+        private Transform _animTorso, _chest;
         private float _targetDirVerticalPercent;
 
 
@@ -91,7 +91,6 @@ namespace ActiveRagdoll {
 
             _targetDir = _activeRagdoll.TargetDirection;
             _animTorso = _activeRagdoll.AnimatedTorso;
-            _physTorso = _activeRagdoll.PhysicalTorso.transform;
             _chest = _activeRagdoll.GetAnimatedBone(HumanBodyBones.Spine);
             ReflectBackwards();
             _targetDir2D = Auxiliary.GetFloorProjection(_targetDir);

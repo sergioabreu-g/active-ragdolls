@@ -17,18 +17,20 @@ namespace ActiveRagdoll {
 
         [Header("--- GENERAL ---")]
         [SerializeField] private BALANCE_MODE _balanceMode = BALANCE_MODE.STABILIZER_JOINT;
-        public BALANCE_MODE BalanceMode { get { return _balanceMode; }
-                                          set { Debug.Log("UNFINISHED WORK HERE"); } }
+        public BALANCE_MODE BalanceMode { get { return _balanceMode; } }
 
         [Header("--- STABILIZER JOINT ---")]
         [SerializeField] private JointDriveConfig _stabilizerJointDrive;
         public JointDriveConfig StabilizerJointDrive {
             get { return _stabilizerJointDrive; }
-            set { Debug.Log("UNFINISHED WORK HERE"); }
+            set { if (_stabilizerJoint != null)
+                    _stabilizerJoint.angularXDrive = _stabilizerJoint.angularXDrive = (JointDrive)value;
+                }
         }
 
         private GameObject _stabilizerGameobject;
         private Rigidbody _stabilizerRigidbody;
+        private ConfigurableJoint _stabilizerJoint;
 
         [Header("--- MANUAL ---")]
         public float torque = 500;
@@ -38,7 +40,23 @@ namespace ActiveRagdoll {
 
 
         private void Start() {
-            InitBalance();
+            InitializeStabilizerJoint();
+            StartBalance();
+        }
+
+        /// <summary> Creates the stabilizer GameObject with a Rigidbody and a ConfigurableJoint,
+        /// and connects this last one to the torso. </summary>
+        private void InitializeStabilizerJoint() {
+            _stabilizerGameobject = new GameObject("Stabilizer", typeof(Rigidbody), typeof(ConfigurableJoint));
+            _stabilizerGameobject.transform.parent = _activeRagdoll.PhysicalTorso.transform.parent;
+            _stabilizerGameobject.transform.rotation = _activeRagdoll.PhysicalTorso.rotation;
+
+            _stabilizerJoint = _stabilizerGameobject.GetComponent<ConfigurableJoint>();
+            _stabilizerRigidbody = _stabilizerGameobject.GetComponent<Rigidbody>();
+            _stabilizerRigidbody.isKinematic = true;
+
+            var joint = _stabilizerGameobject.GetComponent<ConfigurableJoint>();
+            joint.connectedBody = _activeRagdoll.PhysicalTorso;
         }
 
         void FixedUpdate() {
@@ -64,10 +82,21 @@ namespace ActiveRagdoll {
             }
         }
 
+        public void SetBalanceMode(BALANCE_MODE balanceMode) {
+            if (_balanceMode == balanceMode) {
+#if UNITY_EDITOR
+                Debug.LogWarning("SetBalanceMode was called but the mode selected was the same as the current one. No changes made."); ;
+#endif
+                return;
+            }
 
+            StopBalance();
+            _balanceMode = balanceMode;
+            StartBalance();
+        }
 
-        /// <summary> Initilizes depending on the balance mode selected </summary>
-        private void InitBalance() {
+        /// <summary> Starts to balance depending on the balance mode selected </summary>
+        private void StartBalance() {
             switch (_balanceMode) {
                 case BALANCE_MODE.FREEZE_ROTATIONS:
                     _activeRagdoll.PhysicalTorso.constraints =
@@ -75,7 +104,8 @@ namespace ActiveRagdoll {
                     break;
 
                 case BALANCE_MODE.STABILIZER_JOINT:
-                    InitializeStabilizerJoint();
+                    var jointDrive = (JointDrive) _stabilizerJointDrive;
+                    _stabilizerJoint.angularXDrive = _stabilizerJoint.angularYZDrive = jointDrive;
                     break;
 
                 case BALANCE_MODE.MANUAL:
@@ -85,7 +115,7 @@ namespace ActiveRagdoll {
             }
         }
 
-        /// <summary> Cleans up everything that was being used for balance. </summary>
+        /// <summary> Cleans up everything that was being used for the current balance mode. </summary>
         private void StopBalance() {
             switch (_balanceMode) {
                 case BALANCE_MODE.FREEZE_ROTATIONS:
@@ -93,7 +123,8 @@ namespace ActiveRagdoll {
                     break;
 
                 case BALANCE_MODE.STABILIZER_JOINT:
-                    Destroy(_stabilizerGameobject);
+                    var jointDrive = (JointDrive) JointDriveConfig.ZERO;
+                    _stabilizerJoint.angularXDrive = _stabilizerJoint.angularYZDrive = jointDrive;
                     break;
 
                 case BALANCE_MODE.MANUAL:
@@ -101,28 +132,6 @@ namespace ActiveRagdoll {
 
                 default: break;
             }
-        }
-
-        /// <summary> Creates the stabilizer GameObject with a Rigidbody and a ConfigurableJoint,
-        /// and connects this last one to the torso. </summary>
-        private void InitializeStabilizerJoint() {
-            _stabilizerGameobject = new GameObject("Stabilizer", typeof(Rigidbody), typeof(ConfigurableJoint));
-            _stabilizerGameobject.transform.parent = _activeRagdoll.PhysicalTorso.transform.parent;
-            _stabilizerGameobject.transform.rotation = _activeRagdoll.PhysicalTorso.rotation;
-
-            _stabilizerRigidbody = _stabilizerGameobject.GetComponent<Rigidbody>();
-            _stabilizerRigidbody.isKinematic = true;
-
-            var joint = _stabilizerGameobject.GetComponent<ConfigurableJoint>();
-            joint.connectedBody = _activeRagdoll.PhysicalTorso;
-
-            var jointDrive = new UnityEngine.JointDrive();
-            jointDrive.positionSpring = _stabilizerJointDrive.positionSpring;
-            jointDrive.positionDamper = _stabilizerJointDrive.positionDamper;
-            jointDrive.maximumForce = _stabilizerJointDrive.maximumForce;
-
-            joint.angularXDrive = jointDrive;
-            joint.angularYZDrive = jointDrive;
         }
 
         public void InputMove(Vector2 manualStabilizationInput) {

@@ -8,17 +8,17 @@ using ActiveRagdoll;
 /// </summary>
 public class ActiveRagdollBehaviour : MonoBehaviour {
     // Author: Sergio Abreu García | https://sergioabreu.me
-    private ActiveRagdoll.ActiveRagdoll _activeRagdoll;
-    private SensorsModule _sensors;
-    private MovementModule _movement;
+    [SerializeField] private BalanceModule _balanceModule;
 
-    void Start() {
-        _activeRagdoll = GetComponent<ActiveRagdoll.ActiveRagdoll>();
-        _sensors = GetComponent<SensorsModule>();
-        _movement = GetComponent<MovementModule>();
+    private void OnValidate() {
+        if (_balanceModule == null)
+            _balanceModule = GetComponent<BalanceModule>();
     }
 
     public void OnFloorChanged(bool onFloor) {
-
+        if (onFloor)
+            _balanceModule.SetBalanceMode(BalanceModule.BALANCE_MODE.STABILIZER_JOINT);
+        else
+            _balanceModule.SetBalanceMode(BalanceModule.BALANCE_MODE.MANUAL);
     }
 }
