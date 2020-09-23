@@ -42,6 +42,8 @@ namespace ActiveRagdoll {
         private void Start() {
             InitializeStabilizerJoint();
             StartBalance();
+
+            _activeRagdoll.Input.OnMoveDelegates += MoveInput;
         }
 
         /// <summary> Creates the stabilizer GameObject with a Rigidbody and a ConfigurableJoint,
@@ -134,7 +136,7 @@ namespace ActiveRagdoll {
             }
         }
 
-        public void InputMove(Vector2 manualStabilizationInput) {
+        public void MoveInput(Vector2 manualStabilizationInput) {
             _torqueInput = manualStabilizationInput;
         }
     }

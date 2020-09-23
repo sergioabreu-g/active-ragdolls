@@ -65,6 +65,10 @@ namespace ActiveRagdoll {
             for (int i = 0; i < _joints.Length; i++) {
                 _initialJointsRotation[i] = _joints[i].transform.localRotation;
             }
+
+            _activeRagdoll.Input.OnMoveDelegates += MoveInput;
+            _activeRagdoll.Input.OnLeftArmDelegates += LeftArmInput;
+            _activeRagdoll.Input.OnRightArmDelegates += RightArmInput;
         }
 
         void FixedUpdate() {
@@ -168,18 +172,18 @@ namespace ActiveRagdoll {
             animator.SetFloat("speed", speed);
         }
 
-        public void InputMove(Vector2 movement) {
+        public void MoveInput(Vector2 movement) {
             _movementInput = movement;
         }
         
-        public void InputLeftArm(float weight) {
+        public void LeftArmInput(float weight) {
             if (!_enableIK)
                 return;
 
             _animatorHelper.LeftArmIKWeight = weight;
         }
 
-        public void InputRightArm(float weight) {
+        public void RightArmInput(float weight) {
             if (!_enableIK)
                 return;
 

@@ -13,8 +13,10 @@ namespace ActiveRagdoll {
         [SerializeField] protected ActiveRagdoll _activeRagdoll;
 
         private void OnValidate() {
-            if (_activeRagdoll == null)
-                _activeRagdoll = GetComponent<ActiveRagdoll>();
+            if (_activeRagdoll == null) {
+                if (!TryGetComponent<ActiveRagdoll>(out _activeRagdoll))
+                    Debug.LogWarning("No ActiveRagdoll could be found for this module.");
+            }
         }
     }
 } // namespace ActiveRagdoll

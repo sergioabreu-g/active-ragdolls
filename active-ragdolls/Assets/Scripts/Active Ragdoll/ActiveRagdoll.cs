@@ -8,12 +8,15 @@ using UnityEngine;
 namespace ActiveRagdoll {
     // Author: Sergio Abreu García | https://sergioabreu.me
 
+    [RequireComponent(typeof(InputModule))]
     public class ActiveRagdoll : MonoBehaviour {
         [Header("--- GENERAL ---")]
         [SerializeField] private int _solverIterations;
         [SerializeField] private int _velSolverIterations;
         public int SolverIterations { get { return _solverIterations; } }
         public int VelSolverIterations { get { return _velSolverIterations; } }
+
+        public InputModule Input { get; private set; }
 
         /// <summary> The unique ID of this Active Ragdoll instance. </summary>
         public uint ID { get; private set; }
@@ -65,6 +68,14 @@ namespace ActiveRagdoll {
             }
 
             AnimatorHelper = _animatedAnimator.gameObject.AddComponent<AnimatorHelper>();
+            InputModule temp;
+            if (TryGetComponent<InputModule>(out temp))
+                Input = temp;
+#if UNITY_EDITOR
+            else
+                Debug.LogError("InputModule could not be found. An ActiveRagdoll must always have" +
+                                "a peer InputModule.");
+#endif
         }
 
         private void FixedUpdate() {
