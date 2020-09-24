@@ -11,10 +11,12 @@ namespace ActiveRagdoll {
     [RequireComponent(typeof(InputModule))]
     public class ActiveRagdoll : MonoBehaviour {
         [Header("--- GENERAL ---")]
-        [SerializeField] private int _solverIterations;
-        [SerializeField] private int _velSolverIterations;
+        [SerializeField] private int _solverIterations = 13;
+        [SerializeField] private int _velSolverIterations = 13;
+        [SerializeField] private float _maxAngularVelocity = 50;
         public int SolverIterations { get { return _solverIterations; } }
         public int VelSolverIterations { get { return _velSolverIterations; } }
+        public float MaxAngularVelocity { get { return _maxAngularVelocity; } }
 
         public InputModule Input { get; private set; }
 
@@ -32,16 +34,16 @@ namespace ActiveRagdoll {
         public ConfigurableJoint[] Joints { get; private set; }
         public Rigidbody[] Rigidbodies { get; private set; }
 
-        /// <summary> The direction where this character should be going/aiming.
-        /// Generally set by the CameraModule and used by the MovementModule.</summary>
-        public Vector3 TargetDirection { get; set; }
-
         [Header("--- ANIMATORS ---")]
         [SerializeField] private Animator _animatedAnimator;
         [SerializeField] private Animator _physicalAnimator;
         public Animator AnimatedAnimator { get { return _animatedAnimator; }
                                            private set { _animatedAnimator = value; } }
+
         public AnimatorHelper AnimatorHelper { get; private set; }
+        /// <summary> Whether to constantly set the rotation of the Animated Body to the Physical Body's.</summary>
+        public bool SyncTorsoPositions { get; set; } = true;
+        public bool SyncTorsoRotations { get; set; } = true;
 
         private void OnValidate() {
             // Automatically retrieve the necessary references
@@ -65,6 +67,7 @@ namespace ActiveRagdoll {
             foreach (Rigidbody rb in Rigidbodies) {
                 rb.solverIterations = _solverIterations;
                 rb.solverVelocityIterations = _velSolverIterations;
+                rb.maxAngularVelocity = _maxAngularVelocity;
             }
 
             AnimatorHelper = _animatedAnimator.gameObject.AddComponent<AnimatorHelper>();
@@ -91,9 +94,11 @@ namespace ActiveRagdoll {
             // with the same orientation, the head movement calculated by the IK
             // for the animated body will be different from the one the physical body
             // needs to look at the same thing, so they will look at totally different places.
-
-            _animatedAnimator.transform.position =_physicalTorso.position
+            if (SyncTorsoPositions)
+                _animatedAnimator.transform.position = _physicalTorso.position
                                 + (_animatedAnimator.transform.position - _animatedTorso.position);
+            if (SyncTorsoRotations)
+                _animatedAnimator.transform.rotation = _physicalTorso.rotation;
         }
 
 

@@ -16,7 +16,7 @@ namespace ActiveRagdoll {
         public float scrollSensitivity = 1;
         public bool invertY = false, invertX = false;
 
-        private GameObject _camera;
+        public GameObject Camera { get; private set; }
         private Vector2 _cameraRotation;
         private Vector2 _inputDelta;
 
@@ -61,9 +61,8 @@ namespace ActiveRagdoll {
         }
 
         void Start() {
-            _camera = new GameObject("Active Ragdoll Camera", typeof(UnityEngine.Camera));
-            _camera.transform.parent = transform;
-            _activeRagdoll.TargetDirection = _camera.transform.forward;
+            Camera = new GameObject("Active Ragdoll Camera", typeof(UnityEngine.Camera));
+            Camera.transform.parent = transform;
 
             _smoothedLookPoint = _lookPoint.position;
             _currentDistance = initialDistance;
@@ -75,8 +74,6 @@ namespace ActiveRagdoll {
             UpdateCameraInput();
             UpdateCameraPosRot();
             AvoidObstacles();
-
-            _activeRagdoll.TargetDirection = _camera.transform.forward;
         }
 
         private void UpdateCameraInput() {
@@ -92,27 +89,27 @@ namespace ActiveRagdoll {
                 float anglePercent = (_cameraRotation.y - minVerticalAngle) / (maxVerticalAngle - minVerticalAngle);
                 float currentDistance = ((anglePercent * inclinationDistance) - inclinationDistance / 2);
                 movedLookPoint += (Quaternion.Euler(inclinationAngle, 0, 0)
-                    * Auxiliary.GetFloorProjection(_camera.transform.forward)) * currentDistance;
+                    * Auxiliary.GetFloorProjection(Camera.transform.forward)) * currentDistance;
             }
             
             // Smooth
             _smoothedLookPoint = Vector3.Lerp(_smoothedLookPoint, movedLookPoint, smooth ? smoothSpeed * Time.deltaTime : 1);
 
-            _camera.transform.position = _smoothedLookPoint - (_startDirection * _currentDistance);
-            _camera.transform.RotateAround(_smoothedLookPoint, Vector3.right, _cameraRotation.y);
-            _camera.transform.RotateAround(_smoothedLookPoint, Vector3.up, _cameraRotation.x);
-            _camera.transform.LookAt(_smoothedLookPoint);
+            Camera.transform.position = _smoothedLookPoint - (_startDirection * _currentDistance);
+            Camera.transform.RotateAround(_smoothedLookPoint, Vector3.right, _cameraRotation.y);
+            Camera.transform.RotateAround(_smoothedLookPoint, Vector3.up, _cameraRotation.x);
+            Camera.transform.LookAt(_smoothedLookPoint);
         }
 
         private void AvoidObstacles() {
-            Ray cameraRay = new Ray(_lookPoint.position, _camera.transform.position - _lookPoint.position);
+            Ray cameraRay = new Ray(_lookPoint.position, Camera.transform.position - _lookPoint.position);
             RaycastHit hitInfo;
             bool hit = Physics.Raycast(cameraRay, out hitInfo,
-                                       Vector3.Distance(_camera.transform.position, _lookPoint.position), ~dontBlockCamera);
+                                       Vector3.Distance(Camera.transform.position, _lookPoint.position), ~dontBlockCamera);
 
             if (hit) {
-                _camera.transform.position = hitInfo.point + (hitInfo.normal * cameraRepositionOffset);
-                _camera.transform.LookAt(_smoothedLookPoint);
+                Camera.transform.position = hitInfo.point + (hitInfo.normal * cameraRepositionOffset);
+                Camera.transform.LookAt(_smoothedLookPoint);
             }
         }
 

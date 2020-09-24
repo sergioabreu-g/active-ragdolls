@@ -31,11 +31,11 @@ namespace ActiveRagdoll {
         }
 
 
-        public void InputLeftArm(float weight) {
+        public void UseLeftGrip(float weight) {
             _leftGrip.enabled = weight > leftArmWeightThreshold;
         }
 
-        public void InputRightArm(float weight) {
+        public void UseRightGrip(float weight) {
             _rightGrip.enabled = weight > rightArmWeightThreshold;
         }
     }

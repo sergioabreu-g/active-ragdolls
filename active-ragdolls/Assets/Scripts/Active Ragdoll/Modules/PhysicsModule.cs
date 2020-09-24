@@ -8,16 +8,28 @@ using UnityEngine;
 namespace ActiveRagdoll {
     // Author: Sergio Abreu García | https://sergioabreu.me
 
-    public class BalanceModule : Module {
+    public class PhysicsModule : Module {
+        // --- BALANCE ---
+
         public enum BALANCE_MODE {
+            UPRIGHT_TORQUE,
+            MANUAL_TORQUE,
             STABILIZER_JOINT,
-            MANUAL,
             FREEZE_ROTATIONS,
+            NONE,
         }
 
         [Header("--- GENERAL ---")]
         [SerializeField] private BALANCE_MODE _balanceMode = BALANCE_MODE.STABILIZER_JOINT;
         public BALANCE_MODE BalanceMode { get { return _balanceMode; } }
+
+        [Header("--- UPRIGHT TORQUE ---")]
+        public float uprightTorque = 10000;
+
+        [Header("--- MANUAL TORQUE ---")]
+        public float manualTorque = 500;
+
+        private Vector2 _torqueInput;
 
         [Header("--- STABILIZER JOINT ---")]
         [SerializeField] private JointDriveConfig _stabilizerJointDrive;
@@ -32,18 +44,21 @@ namespace ActiveRagdoll {
         private Rigidbody _stabilizerRigidbody;
         private ConfigurableJoint _stabilizerJoint;
 
-        [Header("--- MANUAL ---")]
-        public float torque = 500;
+        [Header("--- FREEZE ROTATIONS ---")]
+        [SerializeField] private bool smoothFreezeRot = true;
+        [SerializeField] private float smoothFreezeRotSpeed = 5;
 
-        private Vector2 _torqueInput;
+        // --- ROTATION ---
+
+        public Vector3 TargetDirection { get; set; }
+        private Quaternion _targetRotation;
 
 
 
         private void Start() {
+            UpdateTargetRotation();
             InitializeStabilizerJoint();
             StartBalance();
-
-            _activeRagdoll.Input.OnMoveDelegates += MoveInput;
         }
 
         /// <summary> Creates the stabilizer GameObject with a Rigidbody and a ConfigurableJoint,
@@ -61,21 +76,35 @@ namespace ActiveRagdoll {
             joint.connectedBody = _activeRagdoll.PhysicalTorso;
         }
 
-        void FixedUpdate() {
+        private void FixedUpdate() {
+            UpdateTargetRotation();
+
             switch (_balanceMode) {
+                case BALANCE_MODE.UPRIGHT_TORQUE:
+                    var rot = Quaternion.FromToRotation(_activeRagdoll.PhysicalTorso.transform.up,
+                                                         Vector3.up);
+                    _activeRagdoll.PhysicalTorso.AddTorque(new Vector3(rot.x, rot.y, rot.z)
+                                                                * uprightTorque);
+
+                    //_activeRagdoll.PhysicalTorso.AddRelativeTorque();
+                    break;
+
                 case BALANCE_MODE.FREEZE_ROTATIONS:
-                    _activeRagdoll.AnimatedTorso.transform.rotation =
-                                                _activeRagdoll.AnimatedTorso.rotation;
+                    var smoothedRot = Quaternion.Lerp(_activeRagdoll.PhysicalTorso.rotation,
+                                       _targetRotation, Time.fixedDeltaTime * smoothFreezeRotSpeed);
+                    _activeRagdoll.PhysicalTorso.MoveRotation(smoothedRot);
+
                     break;
 
                 case BALANCE_MODE.STABILIZER_JOINT:
-                    // Move stabilizer to player (useless, but improves clarity)
+                    // Move stabilizer to player torso (useless, but improves clarity)
                     _stabilizerRigidbody.MovePosition(_activeRagdoll.PhysicalTorso.position);
-                    _stabilizerRigidbody.MoveRotation(_activeRagdoll.AnimatedTorso.rotation);
+                    _stabilizerRigidbody.MoveRotation(_targetRotation);
+
                     break;
 
-                case BALANCE_MODE.MANUAL:
-                    var force = _torqueInput * torque;
+                case BALANCE_MODE.MANUAL_TORQUE:
+                    var force = _torqueInput * manualTorque;
                     _activeRagdoll.PhysicalTorso.AddRelativeTorque(force.y, 0, force.x);
 
                     break;
@@ -84,10 +113,18 @@ namespace ActiveRagdoll {
             }
         }
 
+        private void UpdateTargetRotation() {
+            if (TargetDirection != Vector3.zero)
+                _targetRotation = Quaternion.LookRotation(TargetDirection, Vector3.up);
+            else
+                _targetRotation = Quaternion.identity;
+        }
+
         public void SetBalanceMode(BALANCE_MODE balanceMode) {
             if (_balanceMode == balanceMode) {
 #if UNITY_EDITOR
-                Debug.LogWarning("SetBalanceMode was called but the mode selected was the same as the current one. No changes made."); ;
+                Debug.LogWarning("SetBalanceMode was called but the mode selected was the same as " +
+                                "the current one. No changes made."); ;
 #endif
                 return;
             }
@@ -100,9 +137,11 @@ namespace ActiveRagdoll {
         /// <summary> Starts to balance depending on the balance mode selected </summary>
         private void StartBalance() {
             switch (_balanceMode) {
+                case BALANCE_MODE.UPRIGHT_TORQUE:
+                    break;
+
                 case BALANCE_MODE.FREEZE_ROTATIONS:
-                    _activeRagdoll.PhysicalTorso.constraints =
-                    RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+                    _activeRagdoll.PhysicalTorso.constraints = RigidbodyConstraints.FreezeRotation;
                     break;
 
                 case BALANCE_MODE.STABILIZER_JOINT:
@@ -110,7 +149,7 @@ namespace ActiveRagdoll {
                     _stabilizerJoint.angularXDrive = _stabilizerJoint.angularYZDrive = jointDrive;
                     break;
 
-                case BALANCE_MODE.MANUAL:
+                case BALANCE_MODE.MANUAL_TORQUE:
                     break;
 
                 default: break;
@@ -120,6 +159,9 @@ namespace ActiveRagdoll {
         /// <summary> Cleans up everything that was being used for the current balance mode. </summary>
         private void StopBalance() {
             switch (_balanceMode) {
+                case BALANCE_MODE.UPRIGHT_TORQUE:
+                    break;
+
                 case BALANCE_MODE.FREEZE_ROTATIONS:
                     _activeRagdoll.PhysicalTorso.constraints = 0;
                     break;
@@ -129,15 +171,15 @@ namespace ActiveRagdoll {
                     _stabilizerJoint.angularXDrive = _stabilizerJoint.angularYZDrive = jointDrive;
                     break;
 
-                case BALANCE_MODE.MANUAL:
+                case BALANCE_MODE.MANUAL_TORQUE:
                     break;
 
                 default: break;
             }
         }
 
-        public void MoveInput(Vector2 manualStabilizationInput) {
-            _torqueInput = manualStabilizationInput;
+        public void ManualTorqueInput(Vector2 torqueInput) {
+            _torqueInput = torqueInput;
         }
     }
 } // namespace ActiveRagdoll

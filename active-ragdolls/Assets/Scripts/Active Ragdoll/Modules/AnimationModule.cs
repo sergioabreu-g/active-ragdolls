@@ -5,20 +5,13 @@ using UnityEngine;
 namespace ActiveRagdoll {
     // Author: Sergio Abreu García | https://sergioabreu.me
 
-    public class MovementModule : Module {
+    public class AnimationModule : Module {
         [Header("--- BODY ---")]
         /// <summary> Required to set the target rotations of the joints </summary>
         private Quaternion[] _initialJointsRotation;
         private ConfigurableJoint[] _joints;
         private Transform[] _animatedBones;
-
-        [Header("--- ANIMATION ---")]
         private AnimatorHelper _animatorHelper;
-
-        [Header("--- MOVEMENT ---")]
-        public bool _enableMovement = true;
-
-        private Vector2 _movementInput;
 
         [Header("--- INVERSE KINEMATICS ---")]
         public bool _enableIK = true;
@@ -49,8 +42,9 @@ namespace ActiveRagdoll {
         [Tooltip("The distance from the body to the hands in relation to how high/low they are. " +
                  "Allows to create more realistic movement patterns.")]
         public AnimationCurve armsDistance;
-
-        private Vector3 _armsDir, _lookDir, _targetDir, _targetDir2D;
+        
+        public Vector3 AimDirection { get; set; }
+        private Vector3 _armsDir, _lookDir, _targetDir2D;
         private Transform _animTorso, _chest;
         private float _targetDirVerticalPercent;
 
@@ -66,15 +60,11 @@ namespace ActiveRagdoll {
                 _initialJointsRotation[i] = _joints[i].transform.localRotation;
             }
 
-            _activeRagdoll.Input.OnMoveDelegates += MoveInput;
-            _activeRagdoll.Input.OnLeftArmDelegates += LeftArmInput;
-            _activeRagdoll.Input.OnRightArmDelegates += RightArmInput;
         }
 
         void FixedUpdate() {
             UpdateJointTargets();
             UpdateIK();
-            UpdateMovement();
         }
 
         /// <summary> Makes the physical bones match the rotation of the animated ones </summary>
@@ -93,11 +83,11 @@ namespace ActiveRagdoll {
             }
             _animatorHelper.LookIKWeight = 1;
 
-            _targetDir = _activeRagdoll.TargetDirection;
+            AimDirection = AimDirection;
             _animTorso = _activeRagdoll.AnimatedTorso;
             _chest = _activeRagdoll.GetAnimatedBone(HumanBodyBones.Spine);
             ReflectBackwards();
-            _targetDir2D = Auxiliary.GetFloorProjection(_targetDir);
+            _targetDir2D = Auxiliary.GetFloorProjection(AimDirection);
             CalculateVerticalPercent();
 
             UpdateLookIK();
@@ -107,14 +97,14 @@ namespace ActiveRagdoll {
         /// <summary> Reflect the direction when looking backwards, avoids neck-breaking twists </summary>
         /// <param name=""></param>
         private void ReflectBackwards() {
-            bool lookingBackwards = Vector3.Angle(_targetDir, _animTorso.forward) > 90;
-            if (lookingBackwards) _targetDir = Vector3.Reflect(_targetDir, _animTorso.forward);
+            bool lookingBackwards = Vector3.Angle(AimDirection, _animTorso.forward) > 90;
+            if (lookingBackwards) AimDirection = Vector3.Reflect(AimDirection, _animTorso.forward);
         }
 
         /// <summary> Calculate the vertical inlinacion percentage of the target direction
         /// (how much it is looking up) </summary>
         private void CalculateVerticalPercent() {
-            float directionAngle = Vector3.Angle(_targetDir, Vector3.up);
+            float directionAngle = Vector3.Angle(AimDirection, Vector3.up);
             directionAngle -= 90;
             _targetDirVerticalPercent = 1 - Mathf.Clamp01((directionAngle - minTargetDirAngle) / Mathf.Abs(maxTargetDirAngle - minTargetDirAngle));
         }
@@ -138,26 +128,13 @@ namespace ActiveRagdoll {
             Vector3 armsMiddleTarget = _chest.position + _armsDir * currentArmsDistance;
             Vector3 upRef = Vector3.Cross(_armsDir, _animTorso.right).normalized;
             Vector3 armsHorizontalVec = Vector3.Cross(_armsDir, upRef).normalized;
-            Quaternion handsRot = Quaternion.LookRotation(_armsDir, upRef);
+            Quaternion handsRot = _armsDir != Vector3.zero? Quaternion.LookRotation(_armsDir, upRef)
+                                                            : Quaternion.identity;
 
             _animatorHelper.LeftHandTarget.position = armsMiddleTarget + armsHorizontalVec * armsHorizontalSeparation / 2;
             _animatorHelper.RightHandTarget.position = armsMiddleTarget - armsHorizontalVec * armsHorizontalSeparation / 2;
             _animatorHelper.LeftHandTarget.rotation = handsRot * Quaternion.Euler(0, 0, 45 + handsRotationOffset);
             _animatorHelper.RightHandTarget.rotation = handsRot * Quaternion.Euler(0, 0, -45 - handsRotationOffset);
-        }
-
-        /// <summary> Update the movement animation and rotation of the character </summary>
-        private void UpdateMovement() {
-            if (_movementInput == Vector2.zero || !_enableMovement) {
-                PlayAnimation("Idle");
-                return;
-            }
-
-            float angleOffset = Vector2.SignedAngle(_movementInput, Vector2.up);
-            Vector3 targetForward = Quaternion.AngleAxis(angleOffset, Vector3.up) * Auxiliary.GetFloorProjection(_activeRagdoll.TargetDirection);
-            _activeRagdoll.AnimatedAnimator.transform.rotation = Quaternion.LookRotation(targetForward, Vector3.up);
-
-            PlayAnimation("Moving", _movementInput.magnitude);
         }
 
         /// <summary> Plays an animation using the animator. The speed doesn't change the actual
@@ -171,19 +148,15 @@ namespace ActiveRagdoll {
             animator.Play(animation);
             animator.SetFloat("speed", speed);
         }
-
-        public void MoveInput(Vector2 movement) {
-            _movementInput = movement;
-        }
         
-        public void LeftArmInput(float weight) {
+        public void UseLeftArm(float weight) {
             if (!_enableIK)
                 return;
 
             _animatorHelper.LeftArmIKWeight = weight;
         }
 
-        public void RightArmInput(float weight) {
+        public void UseRightArm(float weight) {
             if (!_enableIK)
                 return;
 
