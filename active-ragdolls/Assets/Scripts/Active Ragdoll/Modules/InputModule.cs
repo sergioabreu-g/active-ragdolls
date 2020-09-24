@@ -55,8 +55,7 @@ namespace ActiveRagdoll {
         private void UpdateOnFloor() {
             bool lastIsOnFloor = _isOnFloor;
 
-            Vector3 foo;
-            _isOnFloor = CheckRigidbodyOnFloor(_rightFoot, out foo)
+            _isOnFloor = CheckRigidbodyOnFloor(_rightFoot, out Vector3 foo)
                          || CheckRigidbodyOnFloor(_leftFoot, out foo);
 
             if (_isOnFloor != lastIsOnFloor)
@@ -69,19 +68,15 @@ namespace ActiveRagdoll {
         /// <param name="bodyPart">Part of the body to check</param
         /// <returns> True if the Rigidbody is on floor </returns>
         public bool CheckRigidbodyOnFloor(Rigidbody bodyPart, out Vector3 normal) {
-            RaycastHit info;
-
             // Raycast
             Ray ray = new Ray(bodyPart.position, Vector3.down);
-            bool onFloor = Physics.Raycast(ray, out info, floorDetectionDistance, ~(1 << bodyPart.gameObject.layer));
+            bool onFloor = Physics.Raycast(ray, out RaycastHit info, floorDetectionDistance, ~(1 << bodyPart.gameObject.layer));
 
             // Additional checks
             onFloor = onFloor && Vector3.Angle(info.normal, Vector3.up) <= maxFloorSlope;
 
-            /*if (onFloor) {
-                AFloor floor = info.collider.gameObject.GetComponent<AFloor>();
-                if (floor != null) onFloor = floor.isFloor;
-            }*/
+            if (onFloor && info.collider.gameObject.TryGetComponent<Floor>(out Floor floor))
+                    onFloor = floor.isFloor;
 
             normal = info.normal;
             return onFloor;

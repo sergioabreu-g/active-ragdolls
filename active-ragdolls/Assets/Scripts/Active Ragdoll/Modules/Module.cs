@@ -11,6 +11,7 @@ namespace ActiveRagdoll {
     [RequireComponent(typeof(ActiveRagdoll))]
     public class Module : MonoBehaviour {
         [SerializeField] protected ActiveRagdoll _activeRagdoll;
+        public ActiveRagdoll ActiveRagdoll { get { return _activeRagdoll; } }
 
         private void OnValidate() {
             if (_activeRagdoll == null) {

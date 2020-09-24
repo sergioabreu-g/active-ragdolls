@@ -6,9 +6,7 @@ namespace ActiveRagdoll {
     // Author: Sergio Abreu García | https://sergioabreu.me
 
     public class Gripper : MonoBehaviour {
-        private ActiveRagdoll _activeRagdoll;
-        private bool _onlyUseTriggers = false;
-        private bool _canGripYourself = false;
+        public GripModule GripMod { get; set; }
 
         /// <summary> If the component is activated after colliding with something, it won't grip
         /// to it unless the collision enters again. This variable hold the last collision to avoid
@@ -17,14 +15,9 @@ namespace ActiveRagdoll {
 
         private ConfigurableJoint _joint;
 
-        public void Init(ActiveRagdoll activeRagdoll, bool onlyUseTriggers,
-                         bool canGripYourself, bool startDisabled = true) {
-            _activeRagdoll = activeRagdoll;
-            _onlyUseTriggers = onlyUseTriggers;
-            _canGripYourself = canGripYourself;
-
+        public void Start() {
             // Start disabled is useful to avoid fake gripping something at the start
-            enabled = !startDisabled;
+            enabled = false;
         }
 
         private void Grip(Rigidbody whatToGrip) {
@@ -36,7 +29,8 @@ namespace ActiveRagdoll {
             if (_joint != null)
                 return;
 
-            if (!_canGripYourself && whatToGrip.transform.IsChildOf(_activeRagdoll.transform))
+            if (!GripMod.canGripYourself
+                    && whatToGrip.transform.IsChildOf(GripMod.ActiveRagdoll.transform))
                 return;
 
             _joint = gameObject.AddComponent<ConfigurableJoint>();
@@ -44,6 +38,11 @@ namespace ActiveRagdoll {
             _joint.xMotion = ConfigurableJointMotion.Locked;
             _joint.yMotion = ConfigurableJointMotion.Locked;
             _joint.zMotion = ConfigurableJointMotion.Locked;
+
+            if (TryGetComponent(out Grippable grippable))
+                grippable.jointMotionsConfig.ApplyTo(_joint);
+            else
+                GripMod.defaultMotionsConfig.ApplyTo(_joint);
         }
 
         private void UnGrip() {
@@ -57,7 +56,7 @@ namespace ActiveRagdoll {
 
 
         private void OnCollisionEnter(Collision collision) {
-            if (_onlyUseTriggers)
+            if (GripMod.onlyUseTriggers)
                 return;
 
             if (collision.rigidbody != null)

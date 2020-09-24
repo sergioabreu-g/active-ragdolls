@@ -31,6 +31,32 @@ namespace ActiveRagdoll {
                                { _positionSpring = 0, _positionDamper = 0, _maximumForce = 0};
     }
 
+    [Serializable] public struct JointMotionsConfig {
+        public ConfigurableJointMotion angularXMotion, angularYMotion, angularZMotion;
+        public float angularXLimit, angularYLimit, angularZLimit;
+
+        public void ApplyTo(in ConfigurableJoint joint) {
+            joint.angularXMotion = angularXMotion;
+            joint.angularYMotion = angularYMotion;
+            joint.angularZMotion = angularZMotion;
+
+            var softJointLimit = new SoftJointLimit();
+
+            softJointLimit.limit = angularXLimit / 2;
+            joint.highAngularXLimit = softJointLimit;
+
+            softJointLimit.limit = -softJointLimit.limit;
+            joint.lowAngularXLimit = softJointLimit;
+
+            softJointLimit.limit = angularYLimit;
+            joint.angularYLimit = softJointLimit;
+
+            softJointLimit.limit = angularZLimit;
+            joint.angularZLimit = softJointLimit;
+        }
+    }
+
+
     public static class Auxiliary {
         /// <summary>
         /// Calculates the normalized projection of the Vector3 'vec'

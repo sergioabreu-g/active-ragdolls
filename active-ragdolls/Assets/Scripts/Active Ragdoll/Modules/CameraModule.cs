@@ -103,8 +103,7 @@ namespace ActiveRagdoll {
 
         private void AvoidObstacles() {
             Ray cameraRay = new Ray(_lookPoint.position, Camera.transform.position - _lookPoint.position);
-            RaycastHit hitInfo;
-            bool hit = Physics.Raycast(cameraRay, out hitInfo,
+            bool hit = Physics.Raycast(cameraRay, out RaycastHit hitInfo,
                                        Vector3.Distance(Camera.transform.position, _lookPoint.position), ~dontBlockCamera);
 
             if (hit) {

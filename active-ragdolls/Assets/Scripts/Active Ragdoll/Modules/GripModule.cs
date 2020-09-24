@@ -10,6 +10,7 @@ namespace ActiveRagdoll {
         [Tooltip("What's the minimum weight the arm IK should have over the whole " +
         "animation to activate the grip")]
         public float leftArmWeightThreshold = 0.5f, rightArmWeightThreshold = 0.5f;
+        public JointMotionsConfig defaultMotionsConfig;
 
         [Tooltip("Whether to only use Colliders marked as triggers to detect grip collisions.")]
         public bool onlyUseTriggers = false;
@@ -23,11 +24,8 @@ namespace ActiveRagdoll {
             var leftHand = _activeRagdoll.GetPhysicalBone(HumanBodyBones.LeftHand).gameObject;
             var rightHand = _activeRagdoll.GetPhysicalBone(HumanBodyBones.RightHand).gameObject;
 
-            _leftGrip = leftHand.AddComponent<Gripper>();
-            _rightGrip = rightHand.AddComponent<Gripper>();
-
-            _leftGrip.Init(_activeRagdoll, onlyUseTriggers, canGripYourself);
-            _rightGrip.Init(_activeRagdoll, onlyUseTriggers, canGripYourself);
+            (_leftGrip = leftHand.AddComponent<Gripper>()).GripMod = this;
+            (_rightGrip = rightHand.AddComponent<Gripper>()).GripMod = this;
         }
 
 

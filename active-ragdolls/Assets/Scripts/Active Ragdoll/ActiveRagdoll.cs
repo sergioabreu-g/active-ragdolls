@@ -71,8 +71,7 @@ namespace ActiveRagdoll {
             }
 
             AnimatorHelper = _animatedAnimator.gameObject.AddComponent<AnimatorHelper>();
-            InputModule temp;
-            if (TryGetComponent<InputModule>(out temp))
+            if (TryGetComponent(out InputModule temp))
                 Input = temp;
 #if UNITY_EDITOR
             else

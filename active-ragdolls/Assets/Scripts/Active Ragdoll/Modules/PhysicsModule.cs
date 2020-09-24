@@ -45,8 +45,7 @@ namespace ActiveRagdoll {
         private ConfigurableJoint _stabilizerJoint;
 
         [Header("--- FREEZE ROTATIONS ---")]
-        [SerializeField] private bool smoothFreezeRot = true;
-        [SerializeField] private float smoothFreezeRotSpeed = 5;
+        [SerializeField] private float freezeRotationSpeed = 5;
 
         // --- ROTATION ---
 
@@ -91,7 +90,7 @@ namespace ActiveRagdoll {
 
                 case BALANCE_MODE.FREEZE_ROTATIONS:
                     var smoothedRot = Quaternion.Lerp(_activeRagdoll.PhysicalTorso.rotation,
-                                       _targetRotation, Time.fixedDeltaTime * smoothFreezeRotSpeed);
+                                       _targetRotation, Time.fixedDeltaTime * freezeRotationSpeed);
                     _activeRagdoll.PhysicalTorso.MoveRotation(smoothedRot);
 
                     break;
