@@ -22,12 +22,14 @@ namespace ActiveRagdoll {
         [Header("--- GENERAL ---")]
         [SerializeField] private BALANCE_MODE _balanceMode = BALANCE_MODE.STABILIZER_JOINT;
         public BALANCE_MODE BalanceMode { get { return _balanceMode; } }
+        public float customTorsoAngularDrag = 0.05f;
 
         [Header("--- UPRIGHT TORQUE ---")]
         public float uprightTorque = 10000;
 
         [Header("--- MANUAL TORQUE ---")]
         public float manualTorque = 500;
+        public float maxManualRotSpeed = 5;
 
         private Vector2 _torqueInput;
 
@@ -77,6 +79,7 @@ namespace ActiveRagdoll {
 
         private void FixedUpdate() {
             UpdateTargetRotation();
+            ApplyCustomDrag();
 
             switch (_balanceMode) {
                 case BALANCE_MODE.UPRIGHT_TORQUE:
@@ -85,7 +88,9 @@ namespace ActiveRagdoll {
                     _activeRagdoll.PhysicalTorso.AddTorque(new Vector3(rot.x, rot.y, rot.z)
                                                                 * uprightTorque);
 
-                    //_activeRagdoll.PhysicalTorso.AddRelativeTorque();
+                    var percent = Vector3.SignedAngle(_activeRagdoll.PhysicalTorso.transform.forward,
+                                        TargetDirection, Vector3.up)/180;
+                    _activeRagdoll.PhysicalTorso.AddRelativeTorque(0, percent * manualTorque, 0);
                     break;
 
                 case BALANCE_MODE.FREEZE_ROTATIONS:
@@ -103,8 +108,10 @@ namespace ActiveRagdoll {
                     break;
 
                 case BALANCE_MODE.MANUAL_TORQUE:
-                    var force = _torqueInput * manualTorque;
-                    _activeRagdoll.PhysicalTorso.AddRelativeTorque(force.y, 0, force.x);
+                    if (_activeRagdoll.PhysicalTorso.angularVelocity.magnitude < maxManualRotSpeed) {
+                        var force = _torqueInput * manualTorque;
+                        _activeRagdoll.PhysicalTorso.AddRelativeTorque(force.y, 0, force.x);
+                    }
 
                     break;
 
@@ -117,6 +124,12 @@ namespace ActiveRagdoll {
                 _targetRotation = Quaternion.LookRotation(TargetDirection, Vector3.up);
             else
                 _targetRotation = Quaternion.identity;
+        }
+
+        private void ApplyCustomDrag() {
+            var angVel = _activeRagdoll.PhysicalTorso.angularVelocity;
+            angVel -= (Mathf.Pow(angVel.magnitude, 2) * customTorsoAngularDrag) * angVel.normalized;
+            _activeRagdoll.PhysicalTorso.angularVelocity = angVel;
         }
 
         public void SetBalanceMode(BALANCE_MODE balanceMode) {

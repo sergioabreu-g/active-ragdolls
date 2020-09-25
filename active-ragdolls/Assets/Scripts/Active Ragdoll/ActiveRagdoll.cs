@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace ActiveRagdoll {
@@ -34,11 +35,16 @@ namespace ActiveRagdoll {
         public ConfigurableJoint[] Joints { get; private set; }
         public Rigidbody[] Rigidbodies { get; private set; }
 
+        [SerializeField] private List<BodyPart> _bodyParts;
+        public List<BodyPart> BodyParts { get { return _bodyParts; } }
+
         [Header("--- ANIMATORS ---")]
         [SerializeField] private Animator _animatedAnimator;
         [SerializeField] private Animator _physicalAnimator;
-        public Animator AnimatedAnimator { get { return _animatedAnimator; }
-                                           private set { _animatedAnimator = value; } }
+        public Animator AnimatedAnimator {
+            get { return _animatedAnimator; }
+            private set { _animatedAnimator = value; }
+        }
 
         public AnimatorHelper AnimatorHelper { get; private set; }
         /// <summary> Whether to constantly set the rotation of the Animated Body to the Physical Body's.</summary>
@@ -59,6 +65,9 @@ namespace ActiveRagdoll {
             AnimatedBones = _animatedTorso.GetComponentsInChildren<Transform>();
             Joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
             Rigidbodies = _physicalTorso.GetComponentsInChildren<Rigidbody>();
+
+            if (_bodyParts.Count == 0)
+                GetDefaultBodyParts();
         }
 
         private void Awake() {
@@ -70,6 +79,9 @@ namespace ActiveRagdoll {
                 rb.maxAngularVelocity = _maxAngularVelocity;
             }
 
+            foreach (BodyPart bodyPart in _bodyParts)
+                bodyPart.Init();
+
             AnimatorHelper = _animatedAnimator.gameObject.AddComponent<AnimatorHelper>();
             if (TryGetComponent(out InputModule temp))
                 Input = temp;
@@ -78,6 +90,33 @@ namespace ActiveRagdoll {
                 Debug.LogError("InputModule could not be found. An ActiveRagdoll must always have" +
                                 "a peer InputModule.");
 #endif
+        }
+
+        private void GetDefaultBodyParts() {
+            _bodyParts.Add(new BodyPart("Head Neck",
+                TryGetJoints(HumanBodyBones.Head, HumanBodyBones.Neck)));
+            _bodyParts.Add(new BodyPart("Torso",
+               TryGetJoints(HumanBodyBones.Spine, HumanBodyBones.Chest, HumanBodyBones.UpperChest)));
+            _bodyParts.Add(new BodyPart("Left Arm",
+                TryGetJoints(HumanBodyBones.LeftUpperArm, HumanBodyBones.LeftLowerArm, HumanBodyBones.LeftHand)));
+            _bodyParts.Add(new BodyPart("Right Arm",
+                TryGetJoints(HumanBodyBones.RightUpperArm, HumanBodyBones.RightLowerArm, HumanBodyBones.RightHand)));
+            _bodyParts.Add(new BodyPart("Left Leg",
+                TryGetJoints(HumanBodyBones.LeftUpperLeg, HumanBodyBones.LeftLowerLeg, HumanBodyBones.LeftFoot)));
+            _bodyParts.Add(new BodyPart("Right Leg",
+                TryGetJoints(HumanBodyBones.RightUpperLeg, HumanBodyBones.RightLowerLeg, HumanBodyBones.RightFoot)));
+        }
+
+        private List<ConfigurableJoint> TryGetJoints(params HumanBodyBones[] bones) {
+            List<ConfigurableJoint> jointList = new List<ConfigurableJoint>();
+            foreach (HumanBodyBones bone in bones) {
+                Transform boneTransform = _physicalAnimator.GetBoneTransform(bone);
+                ConfigurableJoint joint;
+                if (boneTransform != null && (boneTransform.TryGetComponent(out joint)))
+                    jointList.Add(joint);
+            }
+
+            return jointList;
         }
 
         private void FixedUpdate() {
@@ -115,6 +154,11 @@ namespace ActiveRagdoll {
         /// <returns>The transform of the given PHYSICAL bone</returns>
         public Transform GetPhysicalBone(HumanBodyBones bone) {
             return _physicalAnimator.GetBoneTransform(bone);
+        }
+
+        public void SetStrengthScaleForAllBodyParts (float scale) {
+            foreach (BodyPart bodyPart in _bodyParts)
+                bodyPart.SetStrengthScale(scale);
         }
     }
 } // namespace ActiveRagdoll

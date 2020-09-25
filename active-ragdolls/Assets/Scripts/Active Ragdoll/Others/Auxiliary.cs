@@ -1,7 +1,6 @@
 ﻿#pragma warning disable 649
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ namespace ActiveRagdoll {
         public float MaximumForce { get { return _maximumForce; } }
 
 
-        public static implicit operator JointDrive(JointDriveConfig config) {
+        public static explicit operator JointDrive(JointDriveConfig config) {
             JointDrive jointDrive = new JointDrive {
                 positionSpring = config._positionSpring,
                 positionDamper = config._positionDamper,
@@ -27,8 +26,65 @@ namespace ActiveRagdoll {
             return jointDrive;
         }
 
+        public static explicit operator JointDriveConfig(JointDrive jointDrive) {
+            JointDriveConfig jointDriveConfig = new JointDriveConfig {
+                _positionSpring = jointDrive.positionSpring,
+                _positionDamper = jointDrive.positionDamper,
+                _maximumForce = jointDrive.maximumForce
+            };
+
+            return jointDriveConfig;
+        }
+
         public readonly static JointDriveConfig ZERO = new JointDriveConfig
                                { _positionSpring = 0, _positionDamper = 0, _maximumForce = 0};
+
+        public static JointDriveConfig operator *(JointDriveConfig config, float multiplier) {
+            return new JointDriveConfig {
+                _positionSpring = config.PositionSpring * multiplier,
+                _positionDamper = config.PositionDamper * multiplier,
+                _maximumForce = config.MaximumForce * multiplier
+            };
+        }
+    }
+
+    [Serializable]
+    public class BodyPart {
+        public string bodyPartName;
+
+        [SerializeField] private List<ConfigurableJoint> _joints;
+        private List<JointDriveConfig> XjointDriveConfigs;
+        private List<JointDriveConfig> YZjointDriveConfigs;
+
+        [SerializeField] private float _strengthScale = 1;
+        public float StrengthScale { get { return _strengthScale; } }
+        
+
+        public BodyPart(string name, List<ConfigurableJoint> joints) {
+            bodyPartName = name;
+            _joints = joints;
+        }
+
+        public void Init() {
+            XjointDriveConfigs = new List<JointDriveConfig>();
+            YZjointDriveConfigs = new List<JointDriveConfig>();
+
+            foreach (ConfigurableJoint joint in _joints) {
+                XjointDriveConfigs.Add((JointDriveConfig) joint.angularXDrive);
+                YZjointDriveConfigs.Add((JointDriveConfig) joint.angularYZDrive);
+            }
+
+            _strengthScale = 1;
+        }
+
+        public void SetStrengthScale(float scale) {
+            for (int i = 0; i < _joints.Count; i++) {
+                _joints[i].angularXDrive = (JointDrive) (XjointDriveConfigs[i] * scale);
+                _joints[i].angularYZDrive = (JointDrive) (YZjointDriveConfigs[i] * scale);
+            }
+
+            _strengthScale = scale;
+        }
     }
 
     [Serializable] public struct JointMotionsConfig {
@@ -55,7 +111,6 @@ namespace ActiveRagdoll {
             joint.angularZLimit = softJointLimit;
         }
     }
-
 
     public static class Auxiliary {
         /// <summary>

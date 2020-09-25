@@ -67,12 +67,14 @@ public class DefaultBehaviour : MonoBehaviour {
 
     private void ProcessFloorChanged(bool onFloor) {
         if (onFloor) {
-            _physicsModule.SetBalanceMode(PhysicsModule.BALANCE_MODE.FREEZE_ROTATIONS);
+            _physicsModule.SetBalanceMode(PhysicsModule.BALANCE_MODE.STABILIZER_JOINT);
             _enableMovement = true;
+            //_activeRagdoll.SetStrengthScaleForAllBodyParts(1);
         }
         else {
             _physicsModule.SetBalanceMode(PhysicsModule.BALANCE_MODE.MANUAL_TORQUE);
             _enableMovement = false;
+            //_activeRagdoll.SetStrengthScaleForAllBodyParts(0.2f);
         }
     }
 

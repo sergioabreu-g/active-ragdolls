@@ -23,7 +23,7 @@ namespace ActiveRagdoll {
         [Space(10)]
         [Tooltip("The limits of the arms direction. How far down/up should they be able to point?")]
         public float minArmsAngle = -70;
-        public float maxArmsAngle = 83;
+        public float maxArmsAngle = 100;
         [Tooltip("The limits of the look direction. How far down/up should the character be able to look?")]
         public float minLookAngle = -50, maxLookAngle = 60;
 

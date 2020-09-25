@@ -432,22 +432,22 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -8.984594
+    limit: -60
     bounciness: 0
     contactDistance: 10
   m_HighAngularXLimit:
-    limit: 174.42816
+    limit: 177
     bounciness: 0
     contactDistance: 10
   m_AngularYZLimitSpring:
     spring: 0
     damper: 0
   m_AngularYLimit:
-    limit: 119.79579
+    limit: 99.3502
     bounciness: 0
     contactDistance: 10
   m_AngularZLimit:
-    limit: 114.60751
+    limit: 101.57955
     bounciness: 0
     contactDistance: 10
   m_TargetPosition: {x: 0, y: 0, z: 0}
@@ -556,22 +556,22 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -8.984594
+    limit: -60
     bounciness: 0
     contactDistance: 10
   m_HighAngularXLimit:
-    limit: 174.42816
+    limit: 177
     bounciness: 0
     contactDistance: 10
   m_AngularYZLimitSpring:
     spring: 0
     damper: 0
   m_AngularYLimit:
-    limit: 119.79579
+    limit: 99.3502
     bounciness: 0
     contactDistance: 10
   m_AngularZLimit:
-    limit: 114.60751
+    limit: 101.57955
     bounciness: 0
     contactDistance: 10
   m_TargetPosition: {x: 0, y: 0, z: 0}
@@ -2093,13 +2093,12 @@ MonoBehaviour:
   _activeRagdoll: {fileID: 8894856259471134340}
   _balanceMode: 3
   uprightTorque: 10000
-  manualTorque: 500
+  manualTorque: 250
   _stabilizerJointDrive:
     _positionSpring: 1000
     _positionDamper: 200
     _maximumForce: 1000
-  smoothFreezeRot: 1
-  smoothFreezeRotSpeed: 5
+  freezeRotationSpeed: 5
 --- !u!114 &1014210315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2149,7 +2148,7 @@ MonoBehaviour:
   minTargetDirAngle: -30
   maxTargetDirAngle: 60
   minArmsAngle: -70
-  maxArmsAngle: 83
+  maxArmsAngle: 100
   minLookAngle: -50
   maxLookAngle: 60
   lookAngleOffset: 0
@@ -2204,6 +2203,13 @@ MonoBehaviour:
   _activeRagdoll: {fileID: 8894856259471134340}
   leftArmWeightThreshold: 0.5
   rightArmWeightThreshold: 0.5
+  defaultMotionsConfig:
+    angularXMotion: 0
+    angularYMotion: 0
+    angularZMotion: 0
+    angularXLimit: 0
+    angularYLimit: 0
+    angularZLimit: 0
   onlyUseTriggers: 0
   canGripYourself: 0
 --- !u!114 &817685262
