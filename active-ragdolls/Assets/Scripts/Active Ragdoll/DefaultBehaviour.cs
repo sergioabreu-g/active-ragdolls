@@ -42,7 +42,6 @@ public class DefaultBehaviour : MonoBehaviour {
         _activeRagdoll.Input.OnLeftArmDelegates += _gripModule.UseLeftGrip;
         _activeRagdoll.Input.OnRightArmDelegates += _animationModule.UseRightArm;
         _activeRagdoll.Input.OnRightArmDelegates += _gripModule.UseRightGrip;
-
     }
 
     private void Update() {
@@ -50,6 +49,12 @@ public class DefaultBehaviour : MonoBehaviour {
         _animationModule.AimDirection = _aimDirection;
 
         UpdateMovement();
+
+#if UNITY_EDITOR
+        // TEST
+        if (Input.GetKeyDown(KeyCode.F1))
+            Debug.Break();
+#endif
     }
     
     private void UpdateMovement() {

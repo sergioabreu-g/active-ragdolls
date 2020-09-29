@@ -44,7 +44,7 @@ namespace ActiveRagdoll {
         private float _currentLeftLegIKWeight = 0, _currentRightLegIKWeight = 0;
 
         /// <summary> How much the chest IK will influence the animation at its maximum </summary>
-        public float _chestMaxLookWeight { get; set; } = 0.5f;
+        public float ChestMaxLookWeight { get; set; } = 0.5f;
 
         /// <summary> Smooths the transition between IK an animation to avoid snapping </summary>
         public bool SmoothIKTransitions { get; set; } = true;
@@ -63,17 +63,14 @@ namespace ActiveRagdoll {
 
             LeftHandHint = new GameObject("LeftHandHint").transform;
             RightHandHint = new GameObject("RightHandHint").transform;
-            LeftHandHint.parent = LeftHandTarget;
-            RightHandHint.parent = RightHandTarget;
-            LeftHandHint.Translate(new Vector3(-1, -1, 0), Space.Self);
-            RightHandHint.Translate(new Vector3(1, -1, 0), Space.Self);
+            LeftHandHint.parent = _targetsParent;
+            RightHandHint.parent = _targetsParent;
 
             LeftFootTarget = new GameObject("LeftFootTarget").transform;
             RightFootTarget = new GameObject("RightFootTarget").transform;
             LeftFootTarget.parent = _targetsParent;
             RightFootTarget.parent = _targetsParent;
         }
-
         private void Update() {
             UpdateIKTransitions();
         }
@@ -94,7 +91,7 @@ namespace ActiveRagdoll {
 
         private void OnAnimatorIK(int layerIndex) {
             // Look
-            _animator.SetLookAtWeight(LookIKWeight, ((LeftArmIKWeight + RightArmIKWeight) / 2) * _chestMaxLookWeight, 1, 1, 0);
+            _animator.SetLookAtWeight(LookIKWeight, ((LeftArmIKWeight + RightArmIKWeight) / 2) * ChestMaxLookWeight, 1, 1, 0);
 
             Vector3 lookPos = Vector3.zero;
             if (CurrentLookMode == LookMode.TARGET) lookPos = LookTarget.position;
@@ -119,7 +116,7 @@ namespace ActiveRagdoll {
             _animator.SetIKPosition(AvatarIKGoal.RightHand, RightHandTarget.position);
             _animator.SetIKRotation(AvatarIKGoal.RightHand, RightHandTarget.rotation);
             _animator.SetIKHintPosition(AvatarIKHint.RightElbow, RightHandHint.position);
-
+            
             // Left leg
             _animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, _currentLeftLegIKWeight);
             _animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, _currentLeftLegIKWeight);

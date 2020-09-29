@@ -1657,23 +1657,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 817685254, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: minArmsAngle
-      value: -100
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 817685254, guid: b21f208237dfa604184a809772254745, type: 3}
+      propertyPath: handsRotationOffset
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 817685260, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: defaultMotionsConfig.angularYMotion
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 817685260, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: defaultMotionsConfig.angularXMotion
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 817685260, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: defaultMotionsConfig.angularZMotion
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 817685260, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: defaultMotionsConfig.angularXLimit
-      value: 40
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 817685260, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: defaultMotionsConfig.angularYLimit
@@ -1681,7 +1685,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 817685260, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: defaultMotionsConfig.angularZLimit
-      value: 15
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1014210311, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: _stabilizerJointDrive._maximumForce
@@ -1710,6 +1714,16 @@ PrefabInstance:
     - target: {fileID: 1014210311, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: uprightTorque
       value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8521456093287789793, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8521456094243513908, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8894856259471134340, guid: b21f208237dfa604184a809772254745,
         type: 3}
@@ -1895,6 +1909,46 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Character
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894856259643300605, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_AngularYLimit.limit
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894856260158844090, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_LowAngularXLimit.limit
+      value: -57.23998
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894856260158844090, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_AngularYLimit.limit
+      value: 114.28364
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894856260158844090, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_AngularZLimit.limit
+      value: 99.52659
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894856260234790692, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_AngularYLimit.limit
+      value: 114.28364
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894856260234790692, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_LowAngularXLimit.limit
+      value: -57.23998
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894856260234790692, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_AngularZLimit.limit
+      value: 99.52659
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894856261126614908, guid: b21f208237dfa604184a809772254745,
+        type: 3}
+      propertyPath: m_AngularYLimit.limit
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b21f208237dfa604184a809772254745, type: 3}

@@ -133,8 +133,12 @@ namespace ActiveRagdoll {
 
             _animatorHelper.LeftHandTarget.position = armsMiddleTarget + armsHorizontalVec * armsHorizontalSeparation / 2;
             _animatorHelper.RightHandTarget.position = armsMiddleTarget - armsHorizontalVec * armsHorizontalSeparation / 2;
-            _animatorHelper.LeftHandTarget.rotation = handsRot * Quaternion.Euler(0, 0, 45 + handsRotationOffset);
-            _animatorHelper.RightHandTarget.rotation = handsRot * Quaternion.Euler(0, 0, -45 - handsRotationOffset);
+            _animatorHelper.LeftHandTarget.rotation = handsRot * Quaternion.Euler(0, 0, 90 - handsRotationOffset);
+            _animatorHelper.RightHandTarget.rotation = handsRot * Quaternion.Euler(0, 0, -90 + handsRotationOffset);
+
+            var armsUpVec = Vector3.Cross(_armsDir, _animTorso.right).normalized;
+            _animatorHelper.LeftHandHint.position = armsMiddleTarget + armsHorizontalVec * armsHorizontalSeparation - armsUpVec;
+            _animatorHelper.RightHandHint.position = armsMiddleTarget - armsHorizontalVec * armsHorizontalSeparation - armsUpVec;
         }
 
         /// <summary> Plays an animation using the animator. The speed doesn't change the actual

@@ -111,8 +111,7 @@ namespace ActiveRagdoll {
             List<ConfigurableJoint> jointList = new List<ConfigurableJoint>();
             foreach (HumanBodyBones bone in bones) {
                 Transform boneTransform = _physicalAnimator.GetBoneTransform(bone);
-                ConfigurableJoint joint;
-                if (boneTransform != null && (boneTransform.TryGetComponent(out joint)))
+                if (boneTransform != null && (boneTransform.TryGetComponent(out ConfigurableJoint joint)))
                     jointList.Add(joint);
             }
 
