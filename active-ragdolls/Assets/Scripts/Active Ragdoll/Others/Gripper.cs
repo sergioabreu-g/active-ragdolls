@@ -14,7 +14,8 @@ namespace ActiveRagdoll {
         private Rigidbody _lastCollision;
 
         private ConfigurableJoint _joint;
-
+        private Grippable _gripped;
+        
         public void Start() {
             // Start disabled is useful to avoid fake gripping something at the start
             enabled = false;
@@ -39,8 +40,8 @@ namespace ActiveRagdoll {
             _joint.yMotion = ConfigurableJointMotion.Locked;
             _joint.zMotion = ConfigurableJointMotion.Locked;
 
-            if (TryGetComponent(out Grippable grippable))
-                grippable.jointMotionsConfig.ApplyTo(_joint);
+            if (TryGetComponent(out _gripped))
+                _gripped.jointMotionsConfig.ApplyTo(_joint);
             else
                 GripMod.defaultMotionsConfig.ApplyTo(_joint);
         }
@@ -51,6 +52,7 @@ namespace ActiveRagdoll {
 
             Destroy(_joint);
             _joint = null;
+            _gripped = null;
         }
 
 

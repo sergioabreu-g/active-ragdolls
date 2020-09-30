@@ -59,27 +59,34 @@ public class DefaultBehaviour : MonoBehaviour {
     
     private void UpdateMovement() {
         if (_movement == Vector2.zero || !_enableMovement) {
-            _animationModule.PlayAnimation("Idle");
+            _animationModule.Animator.SetBool("moving", false);
             return;
         }
+
+        _animationModule.Animator.SetBool("moving", true);
+        _animationModule.Animator.SetFloat("speed", _movement.magnitude);        
 
         float angleOffset = Vector2.SignedAngle(_movement, Vector2.up);
         Vector3 targetForward = Quaternion.AngleAxis(angleOffset, Vector3.up) * Auxiliary.GetFloorProjection(_aimDirection);
         _physicsModule.TargetDirection = targetForward;
-
-        _animationModule.PlayAnimation("Moving", _movement.magnitude);
     }
 
     private void ProcessFloorChanged(bool onFloor) {
         if (onFloor) {
             _physicsModule.SetBalanceMode(PhysicsModule.BALANCE_MODE.STABILIZER_JOINT);
             _enableMovement = true;
-            //_activeRagdoll.SetStrengthScaleForAllBodyParts(1);
+            _activeRagdoll.GetBodyPart("Head Neck")?.SetStrengthScale(1);
+            _activeRagdoll.GetBodyPart("Right Leg")?.SetStrengthScale(1);
+            _activeRagdoll.GetBodyPart("Left Leg")?.SetStrengthScale(1);
+            _animationModule.PlayAnimation("Idle");
         }
         else {
             _physicsModule.SetBalanceMode(PhysicsModule.BALANCE_MODE.MANUAL_TORQUE);
             _enableMovement = false;
-            //_activeRagdoll.SetStrengthScaleForAllBodyParts(0.2f);
+            _activeRagdoll.GetBodyPart("Head Neck")?.SetStrengthScale(0.1f);
+            _activeRagdoll.GetBodyPart("Right Leg")?.SetStrengthScale(0.05f);
+            _activeRagdoll.GetBodyPart("Left Leg")?.SetStrengthScale(0.05f);
+            _animationModule.PlayAnimation("InTheAir");
         }
     }
 

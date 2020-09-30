@@ -155,6 +155,13 @@ namespace ActiveRagdoll {
             return _physicalAnimator.GetBoneTransform(bone);
         }
 
+        public BodyPart GetBodyPart(string name) {
+            foreach (BodyPart bodyPart in _bodyParts)
+                if (bodyPart.bodyPartName == name) return bodyPart;
+
+            return null;
+        }
+
         public void SetStrengthScaleForAllBodyParts (float scale) {
             foreach (BodyPart bodyPart in _bodyParts)
                 bodyPart.SetStrengthScale(scale);

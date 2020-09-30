@@ -12,6 +12,7 @@ namespace ActiveRagdoll {
         private ConfigurableJoint[] _joints;
         private Transform[] _animatedBones;
         private AnimatorHelper _animatorHelper;
+        public Animator Animator { get; private set; }
 
         [Header("--- INVERSE KINEMATICS ---")]
         public bool _enableIK = true;
@@ -54,6 +55,7 @@ namespace ActiveRagdoll {
             _joints = _activeRagdoll.Joints;
             _animatedBones = _activeRagdoll.AnimatedBones;
             _animatorHelper = _activeRagdoll.AnimatorHelper;
+            Animator = _activeRagdoll.AnimatedAnimator;
 
             _initialJointsRotation = new Quaternion[_joints.Length];
             for (int i = 0; i < _joints.Length; i++) {
@@ -147,10 +149,8 @@ namespace ActiveRagdoll {
         /// <param name="animation">The name of the animation state to be played</param>
         /// <param name="speed">The speed to be set</param>
         public void PlayAnimation(string animation, float speed = 1) {
-            var animator = _activeRagdoll.AnimatedAnimator;
-
-            animator.Play(animation);
-            animator.SetFloat("speed", speed);
+            Animator.Play(animation);
+            Animator.SetFloat("speed", speed);
         }
         
         public void UseLeftArm(float weight) {
