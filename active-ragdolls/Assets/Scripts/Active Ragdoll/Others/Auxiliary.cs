@@ -91,7 +91,7 @@ namespace ActiveRagdoll {
         public ConfigurableJointMotion angularXMotion, angularYMotion, angularZMotion;
         public float angularXLimit, angularYLimit, angularZLimit;
 
-        public void ApplyTo(in ConfigurableJoint joint) {
+        public void ApplyTo(ref ConfigurableJoint joint) {
             joint.angularXMotion = angularXMotion;
             joint.angularYMotion = angularYMotion;
             joint.angularZMotion = angularZMotion;

@@ -31,6 +31,7 @@ namespace ActiveRagdoll {
         public Transform AnimatedTorso { get { return _animatedTorso; } }
         public Rigidbody PhysicalTorso { get { return _physicalTorso; } }
 
+
         public Transform[] AnimatedBones { get; private set; }
         public ConfigurableJoint[] Joints { get; private set; }
         public Rigidbody[] Rigidbodies { get; private set; }
@@ -54,17 +55,20 @@ namespace ActiveRagdoll {
         private void OnValidate() {
             // Automatically retrieve the necessary references
             var animators = GetComponentsInChildren<Animator>();
-            if (_animatedAnimator == null) _animatedAnimator = animators[0];
-            if (_physicalAnimator == null) _physicalAnimator = animators[1];
+            if (animators.Length >= 2)
+            {
+                if (_animatedAnimator == null) _animatedAnimator = animators[0];
+                if (_physicalAnimator == null) _physicalAnimator = animators[1];
 
-            if (_animatedTorso == null)
-                _animatedTorso = _animatedAnimator.GetBoneTransform(HumanBodyBones.Hips);
-            if (_physicalTorso == null)
-                _physicalTorso = _physicalAnimator.GetBoneTransform(HumanBodyBones.Hips).GetComponent<Rigidbody>();
+                if (_animatedTorso == null)
+                    _animatedTorso = _animatedAnimator.GetBoneTransform(HumanBodyBones.Hips);
+                if (_physicalTorso == null)
+                    _physicalTorso = _physicalAnimator.GetBoneTransform(HumanBodyBones.Hips).GetComponent<Rigidbody>();
+            }
 
-            AnimatedBones = _animatedTorso.GetComponentsInChildren<Transform>();
-            Joints = _physicalTorso.GetComponentsInChildren<ConfigurableJoint>();
-            Rigidbodies = _physicalTorso.GetComponentsInChildren<Rigidbody>();
+            if (AnimatedBones.Length == 0) AnimatedBones = _animatedTorso?.GetComponentsInChildren<Transform>();
+            if (Joints.Length == 0) Joints = _physicalTorso?.GetComponentsInChildren<ConfigurableJoint>();
+            if (Rigidbodies.Length == 0) Rigidbodies = _physicalTorso?.GetComponentsInChildren<Rigidbody>();
 
             if (_bodyParts.Count == 0)
                 GetDefaultBodyParts();

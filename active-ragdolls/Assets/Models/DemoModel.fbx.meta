@@ -292,72 +292,72 @@ ModelImporter:
     - boneName: Chest
       humanName: Spine
       limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
+        min: {x: -60, y: -40, z: -40}
+        max: {x: 60, y: 40, z: 40}
         value: {x: 0, y: 0, z: 0}
         length: 0
-        modified: 0
+        modified: 1
     - boneName: Head
       humanName: Head
       limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
+        min: {x: -40, y: -20, z: -25}
+        max: {x: 40, y: 20, z: 25}
         value: {x: 0, y: 0, z: 0}
         length: 0
-        modified: 0
+        modified: 1
     - boneName: Arm.L
       humanName: LeftUpperArm
       limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
+        min: {x: -75, y: -120, z: -50}
+        max: {x: 75, y: 75, z: 130}
         value: {x: 0, y: 0, z: 0}
         length: 0
-        modified: 0
+        modified: 1
     - boneName: Arm.R
       humanName: RightUpperArm
       limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
+        min: {x: -75, y: -120, z: -50}
+        max: {x: 75, y: 75, z: 130}
         value: {x: 0, y: 0, z: 0}
         length: 0
-        modified: 0
+        modified: 1
     - boneName: Forearm.L
       humanName: LeftLowerArm
       limit:
-        min: {x: -75, y: 0, z: -40}
-        max: {x: 75, y: 0, z: 80}
+        min: {x: -15, y: 0, z: -40}
+        max: {x: 90, y: 0, z: 80}
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 1
     - boneName: Forearm.R
       humanName: RightLowerArm
       limit:
-        min: {x: -75, y: 0, z: -40}
-        max: {x: 75, y: 0, z: 80}
+        min: {x: -15, y: 0, z: -40}
+        max: {x: 90, y: 0, z: 80}
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 1
     - boneName: Hand.L
       humanName: LeftHand
       limit:
-        min: {x: 0, y: -40, z: -30}
-        max: {x: 0, y: 40, z: 30}
+        min: {x: 0, y: -12, z: -35}
+        max: {x: 0, y: 12, z: 35}
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 1
     - boneName: Hand.R
       humanName: RightHand
       limit:
-        min: {x: 0, y: -40, z: -30}
-        max: {x: 0, y: 40, z: 30}
+        min: {x: 0, y: -12, z: -35}
+        max: {x: 0, y: 12, z: 35}
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 1
     - boneName: Neck
       humanName: Neck
       limit:
-        min: {x: 0, y: -40, z: -30}
-        max: {x: 0, y: 40, z: 30}
+        min: {x: 0, y: -50, z: -35}
+        max: {x: 0, y: 50, z: 35}
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 1
@@ -460,7 +460,7 @@ ModelImporter:
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
-    legTwist: 0
+    legTwist: 0.5
     armStretch: 0
     legStretch: 0
     feetSpacing: 0

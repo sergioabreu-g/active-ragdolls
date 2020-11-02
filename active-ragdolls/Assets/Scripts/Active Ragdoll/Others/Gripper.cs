@@ -40,10 +40,10 @@ namespace ActiveRagdoll {
             _joint.yMotion = ConfigurableJointMotion.Locked;
             _joint.zMotion = ConfigurableJointMotion.Locked;
 
-            if (TryGetComponent(out _gripped))
-                _gripped.jointMotionsConfig.ApplyTo(_joint);
+            if (whatToGrip.TryGetComponent(out _gripped))
+                _gripped.jointMotionsConfig.ApplyTo(ref _joint);
             else
-                GripMod.defaultMotionsConfig.ApplyTo(_joint);
+                GripMod.defaultMotionsConfig.ApplyTo(ref _joint);
         }
 
         private void UnGrip() {

@@ -209,6 +209,21 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 6800549392011341644, guid: 22fc3363c0132e245b265cbf4fc8df6f,
+        type: 3}
+      propertyPath: jointMotionsConfig.angularXMotion
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6800549392011341644, guid: 22fc3363c0132e245b265cbf4fc8df6f,
+        type: 3}
+      propertyPath: jointMotionsConfig.angularYMotion
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6800549392011341644, guid: 22fc3363c0132e245b265cbf4fc8df6f,
+        type: 3}
+      propertyPath: jointMotionsConfig.angularZMotion
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 22fc3363c0132e245b265cbf4fc8df6f, type: 3}
 --- !u!1001 &143697482
@@ -297,6 +312,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6800549392011341644, guid: 22fc3363c0132e245b265cbf4fc8df6f,
+        type: 3}
+      propertyPath: jointMotionsConfig.angularXMotion
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6800549392011341644, guid: 22fc3363c0132e245b265cbf4fc8df6f,
+        type: 3}
+      propertyPath: jointMotionsConfig.angularYMotion
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6800549392011341644, guid: 22fc3363c0132e245b265cbf4fc8df6f,
+        type: 3}
+      propertyPath: jointMotionsConfig.angularZMotion
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 22fc3363c0132e245b265cbf4fc8df6f, type: 3}
@@ -1585,6 +1615,18 @@ PrefabInstance:
       propertyPath: handsRotationOffset
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 817685254, guid: b21f208237dfa604184a809772254745, type: 3}
+      propertyPath: maxArmsAngle
+      value: 95
+      objectReference: {fileID: 0}
+    - target: {fileID: 817685254, guid: b21f208237dfa604184a809772254745, type: 3}
+      propertyPath: armsDistance.m_Curve.Array.data[2].value
+      value: 0.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 817685254, guid: b21f208237dfa604184a809772254745, type: 3}
+      propertyPath: armsDistance.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 817685260, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: defaultMotionsConfig.angularYMotion
       value: 2
@@ -1615,7 +1657,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1014210311, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: _balanceMode
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1014210311, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: manualTorque
@@ -1635,7 +1677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1014210311, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: uprightTorque
-      value: 7000
+      value: 12000
       objectReference: {fileID: 0}
     - target: {fileID: 1014210315, guid: b21f208237dfa604184a809772254745, type: 3}
       propertyPath: dontBlockCamera.m_Bits
