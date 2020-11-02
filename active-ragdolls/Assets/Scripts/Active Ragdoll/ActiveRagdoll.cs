@@ -66,9 +66,9 @@ namespace ActiveRagdoll {
                     _physicalTorso = _physicalAnimator.GetBoneTransform(HumanBodyBones.Hips).GetComponent<Rigidbody>();
             }
 
-            if (AnimatedBones.Length == 0) AnimatedBones = _animatedTorso?.GetComponentsInChildren<Transform>();
-            if (Joints.Length == 0) Joints = _physicalTorso?.GetComponentsInChildren<ConfigurableJoint>();
-            if (Rigidbodies.Length == 0) Rigidbodies = _physicalTorso?.GetComponentsInChildren<Rigidbody>();
+            if (AnimatedBones == null) AnimatedBones = _animatedTorso?.GetComponentsInChildren<Transform>();
+            if (Joints == null) Joints = _physicalTorso?.GetComponentsInChildren<ConfigurableJoint>();
+            if (Rigidbodies == null) Rigidbodies = _physicalTorso?.GetComponentsInChildren<Rigidbody>();
 
             if (_bodyParts.Count == 0)
                 GetDefaultBodyParts();
