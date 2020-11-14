@@ -19,7 +19,6 @@ namespace ActiveRagdoll {
         private Gripper _leftGrip, _rightGrip;
 
 
-
         private void Start() {
             var leftHand = _activeRagdoll.GetPhysicalBone(HumanBodyBones.LeftHand).gameObject;
             var rightHand = _activeRagdoll.GetPhysicalBone(HumanBodyBones.RightHand).gameObject;
