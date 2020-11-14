@@ -1,14 +1,14 @@
 # Unity Active Ragdolls!
 
 Ragdolls that physically play animations through the use of joints and rigid bodies.
-Made with Unity v2019.4.1f1.
+Made with Unity v2020.1.9f1.
 
 ![Unity Active Ragdolls preview](_doc/preview.jpg)
 
 ## Getting Started
 
-You just need to clone or download this repository and open the project, preferably
-with Unity v2019.4.1f1. Other versions will probably work just fine, especially
+You just need to clone or download this repository and open the project with Unity.
+It's made in Unity v2020.1.9f1, but other versions will surely work fine, especially
 newer ones.
 
 ## Guide of use
@@ -72,7 +72,7 @@ and its modules act like an API, this script is used to control that API.
 
 ## Built With
 
-* [Unity](https://unity.com/) (v2019.4.1f1)
+* [Unity](https://unity.com/) (v2020.1.9f1)
 
 ## Contributing
 
@@ -80,7 +80,7 @@ Please read [CONTRIBUTING.md](_doc/CONTRIBUTING.md) for details on our code of c
 
 ## Authors
 
-* **[Sergio Abreu García](https://sag-dev.com)** - *Structure modifications*
+* **[Sergio Abreu García](https://sag-dev.com)**
 
 See also the list of [contributors](https://github.com/sergioabreu-g/active-ragdolls/contributors) who participated in this project.
 
