@@ -1,4 +1,4 @@
-# Unity Active Ragdolls!
+# Active Ragdolls in Unity
 
 Ragdolls that physically play animations through the use of joints and rigid bodies.
 Made with Unity v2020.1.9f1.

@@ -26,6 +26,9 @@ namespace ActiveRagdoll {
 
         [Header("--- UPRIGHT TORQUE ---")]
         public float uprightTorque = 10000;
+        [Tooltip("Defines how much torque percent is applied given the inclination angle percent [0, 1]")]
+        public AnimationCurve uprightTorqueFunction;
+        public float rotationTorque = 500;
 
         [Header("--- MANUAL TORQUE ---")]
         public float manualTorque = 500;
@@ -83,14 +86,18 @@ namespace ActiveRagdoll {
 
             switch (_balanceMode) {
                 case BALANCE_MODE.UPRIGHT_TORQUE:
+                    var balancePercent = Vector3.Angle(_activeRagdoll.PhysicalTorso.transform.up,
+                                                         Vector3.up) / 180;
+                    balancePercent = uprightTorqueFunction.Evaluate(balancePercent);
                     var rot = Quaternion.FromToRotation(_activeRagdoll.PhysicalTorso.transform.up,
-                                                         Vector3.up);
-                    _activeRagdoll.PhysicalTorso.AddTorque(new Vector3(rot.x, rot.y, rot.z)
-                                                                * uprightTorque);
+                                                         Vector3.up).normalized;
 
-                    var percent = Vector3.SignedAngle(_activeRagdoll.PhysicalTorso.transform.forward,
-                                        TargetDirection, Vector3.up)/180;
-                    _activeRagdoll.PhysicalTorso.AddRelativeTorque(0, percent * manualTorque, 0);
+                    _activeRagdoll.PhysicalTorso.AddTorque(new Vector3(rot.x, rot.y, rot.z)
+                                                                * uprightTorque * balancePercent);
+
+                    var directionAnglePercent = Vector3.SignedAngle(_activeRagdoll.PhysicalTorso.transform.forward,
+                                        TargetDirection, Vector3.up) / 180;
+                    _activeRagdoll.PhysicalTorso.AddRelativeTorque(0, directionAnglePercent * rotationTorque, 0);
                     break;
 
                 case BALANCE_MODE.FREEZE_ROTATIONS:
