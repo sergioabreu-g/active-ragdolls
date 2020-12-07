@@ -61,7 +61,6 @@ namespace ActiveRagdoll {
             for (int i = 0; i < _joints.Length; i++) {
                 _initialJointsRotation[i] = _joints[i].transform.localRotation;
             }
-
         }
 
         void FixedUpdate() {
