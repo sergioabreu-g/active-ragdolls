@@ -117,7 +117,7 @@ namespace ActiveRagdoll {
         // ------------- Input Handlers -------------
 
         public void OnLook(InputValue value) {
-            _inputDelta = value.Get<Vector2>() / 8;
+            _inputDelta = value.Get<Vector2>() / 10 ;
         }
 
         public void OnScrollWheel(InputValue value) {

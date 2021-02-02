@@ -12,8 +12,8 @@ namespace ActiveRagdoll {
     [RequireComponent(typeof(InputModule))]
     public class ActiveRagdoll : MonoBehaviour {
         [Header("--- GENERAL ---")]
-        [SerializeField] private int _solverIterations = 13;
-        [SerializeField] private int _velSolverIterations = 13;
+        [SerializeField] private int _solverIterations = 12;
+        [SerializeField] private int _velSolverIterations = 4;
         [SerializeField] private float _maxAngularVelocity = 50;
         public int SolverIterations { get { return _solverIterations; } }
         public int VelSolverIterations { get { return _velSolverIterations; } }
@@ -66,16 +66,16 @@ namespace ActiveRagdoll {
                     _physicalTorso = _physicalAnimator.GetBoneTransform(HumanBodyBones.Hips).GetComponent<Rigidbody>();
             }
 
-            if (AnimatedBones == null) AnimatedBones = _animatedTorso?.GetComponentsInChildren<Transform>();
-            if (Joints == null) Joints = _physicalTorso?.GetComponentsInChildren<ConfigurableJoint>();
-            if (Rigidbodies == null) Rigidbodies = _physicalTorso?.GetComponentsInChildren<Rigidbody>();
-
             if (_bodyParts.Count == 0)
                 GetDefaultBodyParts();
         }
 
         private void Awake() {
             ID = _ID_COUNT++;
+
+            if (AnimatedBones == null) AnimatedBones = _animatedTorso?.GetComponentsInChildren<Transform>();
+            if (Joints == null) Joints = _physicalTorso?.GetComponentsInChildren<ConfigurableJoint>();
+            if (Rigidbodies == null) Rigidbodies = _physicalTorso?.GetComponentsInChildren<Rigidbody>();
 
             foreach (Rigidbody rb in Rigidbodies) {
                 rb.solverIterations = _solverIterations;
